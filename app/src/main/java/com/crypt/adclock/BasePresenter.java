@@ -5,4 +5,7 @@ package com.crypt.adclock;
  */
 
 public interface BasePresenter {
+
+    void start();
+
 }
