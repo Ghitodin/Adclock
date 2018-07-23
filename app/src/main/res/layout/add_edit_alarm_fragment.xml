@@ -1,82 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:id="@+id/frameLayout"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent"
-                                             tools:context=".addeditalarm.AddEditAlarmActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".addeditalarm.AddEditAlarmActivity">
 
     <com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker
         android:id="@+id/minutesNumberPicker"
-        android:layout_width="0dp"
+        android:layout_width="92dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/amPmNumber"
         app:layout_constraintStart_toEndOf="@+id/hoursNumberPicker"
         app:layout_constraintTop_toTopOf="parent"
-        app:mnpEditable="false"
-        app:mnpMaxValue="50"
-        app:mnpMinValue="1"
+        app:mnpEditable="true"
+        app:mnpMaxValue="59"
+        app:mnpMinValue="0"
         app:mnpSeparatorColor="@color/colorAccent"
         app:mnpTextColor="@color/colorPrimary"
         app:mnpTextSize="16sp"
         app:mnpTextStyle="bold"
         app:mnpValue="10"
-        app:mnpWrapped="false"/>
+        app:mnpWrapped="false" />
 
     <com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker
         android:id="@+id/hoursNumberPicker"
-        android:layout_width="0dp"
+        android:layout_width="92dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:layout_marginStart="100dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toStartOf="@+id/minutesNumberPicker"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/ll_settings_items"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="parent"
-        app:mnpEditable="false"
-        app:mnpMaxValue="50"
+        app:layout_constraintVertical_bias="0.0"
+        app:mnpEditable="true"
+        app:mnpMaxValue="12"
         app:mnpMinValue="1"
         app:mnpSeparatorColor="@color/colorAccent"
         app:mnpTextColor="@color/colorPrimary"
         app:mnpTextSize="16sp"
         app:mnpTextStyle="bold"
         app:mnpValue="10"
-        app:mnpWrapped="false"/>
+        app:mnpWrapped="false" />
 
-    <Button
-        android:id="@+id/button2"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="0dp"
+    <com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker
+        android:id="@+id/amPmNumber"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Button"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:mnpEditable="false"
+        app:mnpMaxValue="1"
+        app:mnpMinValue="0"
+        app:mnpSeparatorColor="@color/colorAccent"
+        app:mnpTextColor="@color/colorPrimary"
+        app:mnpTextSize="16sp"
+        app:mnpTextStyle="bold"
+        app:mnpValue="10"
+        app:mnpWrapped="false" />
+
+    <LinearLayout
+        android:id="@+id/ll_settings_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:divider="@drawable/grey_horizontal_line"
+        android:orientation="vertical"
+        android:showDividers="beginning|end|middle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/minutesNumberPicker"/>
+        app:layout_constraintTop_toBottomOf="@+id/minutesNumberPicker">
 
-    <ListView
-        android:id="@+id/testListView"
-        android:layout_width="0dp"
-        android:layout_height="299dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2"/>
+        <com.crypt.adclock.widgets.ClickableTextViewRow
+            android:id="@+id/clickable_repeat_mode_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AnimatedRow"
+            app:additional_text="some_description"
+            app:txt_title="@string/repeat" />
 
+        <com.crypt.adclock.widgets.ClickableTextViewRow
+            android:id="@+id/clickable_ringtone_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AnimatedRow"
+            app:additional_text="some_description"
+            app:txt_title="@string/ringtone" />
+
+        <com.crypt.adclock.widgets.ClickableSwitchRow
+            android:id="@+id/clickable_switch_vibro_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AnimatedRow"
+            app:sw_title="@string/vibrate" />
+
+        <com.crypt.adclock.widgets.ClickableTextViewRow
+            android:id="@+id/clickable_label_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AnimatedRow"
+            app:additional_text="some_description"
+            app:txt_title="@string/label" />
+
+    </LinearLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="50dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.13020833" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="242dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="234dp" />
 
 </android.support.constraint.ConstraintLayout>

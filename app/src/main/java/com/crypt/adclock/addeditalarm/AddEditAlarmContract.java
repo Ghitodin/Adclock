@@ -18,12 +18,11 @@ public interface AddEditAlarmContract {
         void showVibrateSettings();
 
         void showDescriptionSettings();
-
     }
+
     interface Presenter extends BasePresenter {
 
         void saveAlarm(int hours, int minutes, RepeatType repeatType,
                        String ringtone, String description);
-
-    }
+        }
 }
