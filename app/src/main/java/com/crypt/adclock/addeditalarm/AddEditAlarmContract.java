@@ -9,20 +9,32 @@ import com.crypt.adclock.data.RepeatType;
  */
 
 public interface AddEditAlarmContract {
+
     interface View extends BaseView<Presenter> {
 
-        void showRepeatSettings();
+        void showRepeatMode(RepeatType repeatType);
 
-        void showRingtoneSettings();
+        void showRingtoneName(String ringtoneName);
 
-        void showVibrateSettings();
+        void showVibrateMode(boolean isVibrateOn);
 
-        void showDescriptionSettings();
+        void showDescription(String description);
     }
 
     interface Presenter extends BasePresenter {
 
-        void saveAlarm(int hours, int minutes, RepeatType repeatType,
-                       String ringtone, String description);
-        }
+        void saveAlarm();
+
+        void setHours(int hours);
+
+        void setMinutes(int minutes);
+
+        void setRepeatType(RepeatType repeatType);
+
+        void setRingtone(String ringtone);
+
+        void setDescription(String description);
+
+        void setVibrateMode(boolean isVibrateOn);
+    }
 }
