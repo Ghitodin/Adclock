@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ClickableSwitchRow">
+        <attr name="sw_title" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="ClickableTextViewRow">
+        <attr name="txt_title" format="string" />
+        <attr name="additional_text" format="string" />
+    </declare-styleable>
+</resources>

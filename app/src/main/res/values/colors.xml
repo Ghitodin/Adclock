@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#263238</color>
     <color name="colorAccent">#d50000</color>
 
+    <color name="whiteBackground">#FAFAFA</color>
+
     <drawable name="completedTaskBackground">#CCCCCC</drawable>
 
     <drawable name="touchFeedback">#CFD8DC</drawable>

@@ -7,4 +7,10 @@
     <string name="no_alarms_add">Add a alarm item +</string>
     <string name="add_alarm">New alarm</string>
     <string name="edit_alarm">Edit alarm</string>
+    <string name="am">AM</string>
+    <string name="pm">PM</string>
+    <string name="repeat">Repeat</string>
+    <string name="ringtone">Ringtone</string>
+    <string name="vibrate">Vibrate</string>
+    <string name="label">Label</string>
 </resources>
