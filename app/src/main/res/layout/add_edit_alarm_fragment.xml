@@ -7,15 +7,76 @@
                                              android:layout_height="match_parent"
                                              tools:context=".addeditalarm.AddEditAlarmActivity">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/textView"
+    <com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker
+        android:id="@+id/minutesNumberPicker"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/hello_blank_fragment"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/hoursNumberPicker"
+        app:layout_constraintTop_toTopOf="parent"
+        app:mnpEditable="false"
+        app:mnpMaxValue="50"
+        app:mnpMinValue="1"
+        app:mnpSeparatorColor="@color/colorAccent"
+        app:mnpTextColor="@color/colorPrimary"
+        app:mnpTextSize="16sp"
+        app:mnpTextStyle="bold"
+        app:mnpValue="10"
+        app:mnpWrapped="false"/>
+
+    <com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker
+        android:id="@+id/hoursNumberPicker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/minutesNumberPicker"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:mnpEditable="false"
+        app:mnpMaxValue="50"
+        app:mnpMinValue="1"
+        app:mnpSeparatorColor="@color/colorAccent"
+        app:mnpTextColor="@color/colorPrimary"
+        app:mnpTextSize="16sp"
+        app:mnpTextStyle="bold"
+        app:mnpValue="10"
+        app:mnpWrapped="false"/>
+
+    <Button
+        android:id="@+id/button2"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/minutesNumberPicker"/>
+
+    <ListView
+        android:id="@+id/testListView"
+        android:layout_width="0dp"
+        android:layout_height="299dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/button2"/>
+
 
 </android.support.constraint.ConstraintLayout>

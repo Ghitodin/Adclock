@@ -5,7 +5,6 @@ package com.crypt.adclock.alarms;
  */
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -77,13 +76,12 @@ public class AlarmsFragment extends Fragment implements AlarmsContract.View {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.alarms_fragment, container, false);
 
         // Set the adapter
         ListView alarmsView = root.findViewById(R.id.alarms_list);
-        Context context = root.getContext();
         alarmsView.setAdapter(this.listAdapter);
 
         this.alarmsView = (LinearLayout) root.findViewById(R.id.alarms_linear_layout);

@@ -19,6 +19,9 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url "https://jitpack.io"
+        }
     }
 }
 
@@ -31,11 +34,11 @@ ext {
     // Support library and architecture components support minSdk 14 and above.
     minSdkVersion = 14
     targetSdkVersion = 26
-    compileSdkVersion = 26
+    compileSdkVersion = 27
     buildToolsVersion = '26.0.2'
 
     // App dependencies
-    supportLibraryVersion = '26.1.0'
+    supportLibraryVersion = '27.1.1'
     constraintLayoutVersion = '1.1.2'
 
     runnerVersion = '1.0.1'
