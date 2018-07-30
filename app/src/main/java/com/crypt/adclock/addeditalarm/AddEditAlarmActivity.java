@@ -2,6 +2,7 @@ package com.crypt.adclock.addeditalarm;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -48,7 +49,7 @@ public class AddEditAlarmActivity extends AppCompatActivity {
     }
 
     private void setToolbarTitle(@Nullable String taskId) {
-        if(taskId == null) {
+        if (taskId == null) {
             actionBar.setTitle(R.string.add_alarm);
         } else {
             actionBar.setTitle(R.string.edit_alarm);

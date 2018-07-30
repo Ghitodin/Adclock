@@ -13,4 +13,6 @@
     <string name="ringtone">Ringtone</string>
     <string name="vibrate">Vibrate</string>
     <string name="label">Label</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.crypt.adclock.addeditalarm;
 
+import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.RepeatType;
 
 /**
@@ -7,6 +8,8 @@ import com.crypt.adclock.data.RepeatType;
  */
 
 public class AddEditAlarmPresenter implements AddEditAlarmContract.Presenter {
+    private Alarm mAlarm;
+    private AddEditAlarmContract.View mView;
 
     @Override
     public void saveAlarm() {
@@ -34,7 +37,7 @@ public class AddEditAlarmPresenter implements AddEditAlarmContract.Presenter {
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setLabel(String label) {
 
     }
 
@@ -45,6 +48,24 @@ public class AddEditAlarmPresenter implements AddEditAlarmContract.Presenter {
 
     @Override
     public void start() {
+        if (mView == null)
+            return;
 
+        mView.updateView(mAlarm);
+    }
+
+    @Override
+    public void editRepeatMode() {
+        mView.showRepeatSettingsDialog();
+    }
+
+    @Override
+    public void editRingtone() {
+        mView.showRingtoneSettingsDialog();
+    }
+
+    @Override
+    public void editLabel() {
+        mView.showLabelInputDialog(mAlarm.getTitle());
     }
 }

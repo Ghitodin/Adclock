@@ -17,7 +17,7 @@ public interface AddEditAlarmContract {
 
         void showRepeatSettingsDialog();
 
-        void showLabelInputDialog();
+        void showLabelInputDialog(String currentLabel);
 
         void showRingtoneSettingsDialog();
     }
@@ -34,8 +34,14 @@ public interface AddEditAlarmContract {
 
         void setRingtone(String ringtone);
 
-        void setDescription(String description);
+        void setLabel(String label);
 
         void setVibrateMode(boolean isVibrateOn);
+
+        void editRepeatMode();
+
+        void editRingtone();
+
+        void editLabel();
     }
 }
