@@ -2,6 +2,7 @@ package com.crypt.adclock.addeditalarm;
 
 import com.crypt.adclock.BasePresenter;
 import com.crypt.adclock.BaseView;
+import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.RepeatType;
 
 /**
@@ -12,13 +13,13 @@ public interface AddEditAlarmContract {
 
     interface View extends BaseView<Presenter> {
 
-        void showRepeatMode(RepeatType repeatType);
+        void updateView(Alarm alarm);
 
-        void showRingtoneName(String ringtoneName);
+        void showRepeatSettingsDialog();
 
-        void showVibrateMode(boolean isVibrateOn);
+        void showLabelInputDialog();
 
-        void showDescription(String description);
+        void showRingtoneSettingsDialog();
     }
 
     interface Presenter extends BasePresenter {

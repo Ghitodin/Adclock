@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 
 import com.crypt.adclock.R;
+import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.RepeatType;
 import com.crypt.adclock.widgets.ClickableTextViewRow;
 import com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker;
@@ -71,22 +72,7 @@ public class AddEditAlarmFragment extends Fragment implements AddEditAlarmContra
     }
 
     @Override
-    public void showRepeatMode(RepeatType repeatType) {
-
-    }
-
-    @Override
-    public void showRingtoneName(String ringtoneName) {
-
-    }
-
-    @Override
-    public void showVibrateMode(boolean isVibrateOn) {
-
-    }
-
-    @Override
-    public void showDescription(String description) {
+    public void updateView(Alarm alarm) {
 
     }
 
@@ -95,15 +81,18 @@ public class AddEditAlarmFragment extends Fragment implements AddEditAlarmContra
 
     }
 
-    private void showRepeatSettingsDialog() {
+    @Override
+    public void showRepeatSettingsDialog() {
 
     }
 
-    private void showRingtoneSettingsDialog() {
+    @Override
+    public void showRingtoneSettingsDialog() {
 
     }
 
-    private void showDescriptionSettingsDialog() {
+    @Override
+    public void showLabelInputDialog() {
 
     }
 
