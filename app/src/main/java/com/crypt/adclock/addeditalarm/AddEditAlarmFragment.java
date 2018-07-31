@@ -2,10 +2,13 @@ package com.crypt.adclock.addeditalarm;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -43,6 +46,8 @@ public class AddEditAlarmFragment extends Fragment implements
     public static final String ARGUMENT_EDIT_TASK_ID = "EDIT_TASK_ID";
     private final int AM_INT = 0;
     private final int PM_INT = 1;
+
+    private final int RINGTONE_REQUEST_CODE = 5;
 
     private AddEditAlarmContract.Presenter mPresenter;
 
@@ -145,8 +150,20 @@ public class AddEditAlarmFragment extends Fragment implements
     }
 
     @Override
-    public void showRingtoneSettingsDialog() {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        data.getStringExtra(RingtoneManager.EXTRA_RINGTONE_TITLE);
+    }
 
+    @Override
+    public void showRingtoneSettingsDialog() {
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Choose Ringtone");
+        /*intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, ringtoneUri);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, ringtoneUri);*/
+
+        this.startActivityForResult(intent, RINGTONE_REQUEST_CODE);
     }
 
     @Override
@@ -172,7 +189,7 @@ public class AddEditAlarmFragment extends Fragment implements
             }
         });
 
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         dialog.show();
     }
 

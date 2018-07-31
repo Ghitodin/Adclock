@@ -15,6 +15,8 @@ public class AddEditAlarmActivity extends AppCompatActivity {
     public static final int REQUEST_ADD_TASK = 1;
     private ActionBar actionBar;
 
+    private AddEditAlarmPresenter mAddEditPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +48,8 @@ public class AddEditAlarmActivity extends AppCompatActivity {
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
                     addEditTaskFragment, R.id.contentFrame);
         }
+
+        mAddEditPresenter = new AddEditAlarmPresenter(addEditTaskFragment);
     }
 
     private void setToolbarTitle(@Nullable String taskId) {

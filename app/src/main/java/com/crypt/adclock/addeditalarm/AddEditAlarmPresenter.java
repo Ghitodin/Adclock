@@ -7,9 +7,15 @@ import com.crypt.adclock.data.RepeatType;
  * Created by Ghito on 08-Mar-18.
  */
 
-public class AddEditAlarmPresenter implements AddEditAlarmContract.Presenter {
+public class AddEditAlarmPresenter implements
+        AddEditAlarmContract.Presenter {
     private Alarm mAlarm;
     private AddEditAlarmContract.View mView;
+
+    AddEditAlarmPresenter(AddEditAlarmContract.View view) {
+        mView = view;
+        mView.setPresenter(this);
+    }
 
     @Override
     public void saveAlarm() {
@@ -38,7 +44,7 @@ public class AddEditAlarmPresenter implements AddEditAlarmContract.Presenter {
 
     @Override
     public void setLabel(String label) {
-
+        mView.updateView(mAlarm);
     }
 
     @Override
@@ -66,6 +72,8 @@ public class AddEditAlarmPresenter implements AddEditAlarmContract.Presenter {
 
     @Override
     public void editLabel() {
-        mView.showLabelInputDialog(mAlarm.getTitle());
+        // TODO Change hardcoded string to mAlarm.getLabel()
+        mView.showLabelInputDialog("kek");
     }
+
 }

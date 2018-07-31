@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -13,7 +14,7 @@ import android.widget.TextView;
 
 import com.crypt.adclock.R;
 
-public class ClickableTextViewRow extends LinearLayout {
+public class ClickableTextViewRow extends LinearLayout implements View.OnClickListener {
     private TextView mAdditionalText;
     private Button mBtnTitle;
     private ImageView mSomeImage;
@@ -52,6 +53,9 @@ public class ClickableTextViewRow extends LinearLayout {
 
         mAdditionalText.setText(mText);
         mBtnTitle.setText(mTitle);
+
+        mAdditionalText.setOnClickListener(this);
+        mBtnTitle.setOnClickListener(this);
     }
 
     public void setTitle(@StringRes int res) {
@@ -78,5 +82,10 @@ public class ClickableTextViewRow extends LinearLayout {
 
     public String getText() {
         return mText;
+    }
+
+    @Override
+    public void onClick(View v) {
+        this.performClick();
     }
 }
