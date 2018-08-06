@@ -1,14 +1,10 @@
 package com.crypt.adclock.addeditalarm;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -25,9 +21,6 @@ import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.widgets.ClickableSwitchRow;
 import com.crypt.adclock.widgets.ClickableTextViewRow;
 import com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker;
-
-import java.text.DateFormat;
-import java.time.format.DateTimeFormatter;
 
 
 public class AddEditAlarmFragment extends Fragment implements
@@ -127,7 +120,7 @@ public class AddEditAlarmFragment extends Fragment implements
                 mPresenter.editRepeatMode();
                 break;
             case R.id.clickable_ringtone_item:
-                mPresenter.editRingtone();
+                mPresenter.pickRingtone();
                 break;
             case R.id.clickable_label_item:
                 mPresenter.editLabel();
@@ -153,17 +146,6 @@ public class AddEditAlarmFragment extends Fragment implements
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         data.getStringExtra(RingtoneManager.EXTRA_RINGTONE_TITLE);
-    }
-
-    @Override
-    public void showRingtoneSettingsDialog() {
-        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Choose Ringtone");
-        /*intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, ringtoneUri);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, ringtoneUri);*/
-
-        this.startActivityForResult(intent, RINGTONE_REQUEST_CODE);
     }
 
     @Override
