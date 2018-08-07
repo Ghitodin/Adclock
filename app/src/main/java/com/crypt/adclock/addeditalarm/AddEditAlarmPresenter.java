@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.crypt.adclock.R;
+import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.EditLabelDialog;
+import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.EditLabelPresenter;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPresenter;
 import com.crypt.adclock.data.Alarm;
@@ -23,6 +25,9 @@ public class AddEditAlarmPresenter implements
     private Context mContext;
 
     private RingtonePickerPresenter mRingtonePickerPresenter;
+    private EditLabelPresenter mEditLabelPresenter;
+
+    private final String TAG = "AddEditAlarmPresenter";
 
     AddEditAlarmPresenter(Context context, AddEditAlarmContract.View view) {
         mView = view;
@@ -57,7 +62,7 @@ public class AddEditAlarmPresenter implements
 
     @Override
     public void setLabel(String label) {
-        mView.updateView(mAlarm);
+
     }
 
     @Override
@@ -79,12 +84,33 @@ public class AddEditAlarmPresenter implements
     }
 
     @Override
+    public void editLabel() {
+        mEditLabelPresenter = new EditLabelPresenter(
+                ((AppCompatActivity) mContext).getSupportFragmentManager(),
+                new EditLabelDialog.OnLabelSetListener() {
+                    @Override
+                    public void onLabelSet(String label) {
+                        Log.d(TAG, "Label was set: " + label);
+                    }
+                }
+        );
+
+        mEditLabelPresenter.show("", "test_tag");
+    }
+
+    @Override
     public void pickRingtone() {
         mRingtonePickerPresenter = new RingtonePickerPresenter(
                 ((AppCompatActivity) mContext).getSupportFragmentManager(),
                 new RingtonePickerDialog.OnRingtoneSelectedListener() {
                     @Override
                     public void onRingtoneSelected(Uri ringtoneUri) {
+                        // We need call setter or builder here and then update view
+                        // mView.updateView(mAlarm);
+                        String ringtoneName = RingtoneManager
+                                .getRingtone(mContext, ringtoneUri)
+                                .getTitle(mContext);
+                        Log.d(TAG, "Ringtone {" + ringtoneName + "} was set");
                     }
                 }
         );
@@ -107,12 +133,6 @@ public class AddEditAlarmPresenter implements
             selectedRingtoneUri = Uri.parse(ringtone);
 
         return selectedRingtoneUri;
-    }
-
-    @Override
-    public void editLabel() {
-        // TODO Change hardcoded string to mAlarm.getLabel()
-        mView.showLabelInputDialog("kek");
     }
 
 }
