@@ -36,7 +36,7 @@ public class AddEditAlarmFragment extends Fragment implements
     ClickableSwitchRow mVibroSettingsRow;
     ClickableTextViewRow mLabelSettingsRow;
 
-    public static final String ARGUMENT_EDIT_TASK_ID = "EDIT_TASK_ID";
+    public static final String ARGUMENT_EDIT_ALARM_ID = "EDIT_ALARM_ID";
     private final int AM_INT = 0;
     private final int PM_INT = 1;
 
@@ -130,6 +130,16 @@ public class AddEditAlarmFragment extends Fragment implements
 
     @Override
     public void updateView(Alarm alarm) {
+        // Parsing and displaying ringtone name
+        Uri ringtone = Uri.parse(alarm.getRingtone());
+        String ringtoneName = RingtoneManager
+                .getRingtone(getContext(), ringtone)
+                .getTitle(getContext());
+
+        mRingtoneSettingsRow.setText(ringtoneName);
+
+        // Displaying label name
+        mLabelSettingsRow.setText(alarm.getTitle());
     }
 
     @Override

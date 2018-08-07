@@ -14,6 +14,10 @@ import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPrese
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.RepeatType;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Date;
+
 /**
  * Created by Ghito on 08-Mar-18.
  */
@@ -24,14 +28,21 @@ public class AddEditAlarmPresenter implements
     private AddEditAlarmContract.View mView;
     private Context mContext;
 
+    @Nullable
+    private String mAlarmId;
+
     private RingtonePickerPresenter mRingtonePickerPresenter;
     private EditLabelPresenter mEditLabelPresenter;
 
     private final String TAG = "AddEditAlarmPresenter";
 
-    AddEditAlarmPresenter(Context context, AddEditAlarmContract.View view) {
+    AddEditAlarmPresenter(Context context, AddEditAlarmContract.View view, String alarmId) {
+        mAlarmId = alarmId;
         mView = view;
         mContext = context;
+
+        createOrLoadAlarm();
+
         mView.setPresenter(this);
     }
 
@@ -74,6 +85,7 @@ public class AddEditAlarmPresenter implements
     public void start() {
         if (mView == null)
             return;
+        createOrLoadAlarm();
 
         mView.updateView(mAlarm);
     }
@@ -90,12 +102,14 @@ public class AddEditAlarmPresenter implements
                 new EditLabelDialog.OnLabelSetListener() {
                     @Override
                     public void onLabelSet(String label) {
+                        mAlarm.setTitle(label);
+                        mView.updateView(mAlarm);
                         Log.d(TAG, "Label was set: " + label);
                     }
                 }
         );
 
-        mEditLabelPresenter.show("", "test_tag");
+        mEditLabelPresenter.show(mAlarm.getTitle(), "test_tag");
     }
 
     @Override
@@ -105,12 +119,8 @@ public class AddEditAlarmPresenter implements
                 new RingtonePickerDialog.OnRingtoneSelectedListener() {
                     @Override
                     public void onRingtoneSelected(Uri ringtoneUri) {
-                        // We need call setter or builder here and then update view
-                        // mView.updateView(mAlarm);
-                        String ringtoneName = RingtoneManager
-                                .getRingtone(mContext, ringtoneUri)
-                                .getTitle(mContext);
-                        Log.d(TAG, "Ringtone {" + ringtoneName + "} was set");
+                        mAlarm.setRingtone(ringtoneUri.toString());
+                        mView.updateView(mAlarm);
                     }
                 }
         );
@@ -121,9 +131,7 @@ public class AddEditAlarmPresenter implements
 
     private Uri getSelectedRingtoneUri() {
         Uri selectedRingtoneUri;
-        // TODO Uncomment
-        // String ringtone = mAlarm.getRingtone();
-        String ringtone = "";
+        String ringtone = mAlarm.getRingtone();
         if (ringtone.isEmpty())
             // If ringtone is not specified, we take the default ringtone.
             selectedRingtoneUri =
@@ -133,6 +141,23 @@ public class AddEditAlarmPresenter implements
             selectedRingtoneUri = Uri.parse(ringtone);
 
         return selectedRingtoneUri;
+    }
+
+    private boolean isNewAlarm() {
+        return mAlarmId == null;
+    }
+
+    private void createOrLoadAlarm() {
+        if (isNewAlarm()) {
+            /* Initialize new alarm
+                    mAlarm = new Alarm("Kek", new Date(), RepeatType.OnlyOnce,
+                    1, true,
+                    RingtoneManager.getActualDefaultRingtoneUri
+                            (mContext, RingtoneManager.TYPE_ALARM).toString());
+            */
+        } else {
+            // Get from repo by id
+        }
     }
 
 }

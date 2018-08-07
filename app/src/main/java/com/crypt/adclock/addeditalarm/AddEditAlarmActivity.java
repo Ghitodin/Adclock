@@ -31,16 +31,16 @@ public class AddEditAlarmActivity extends AppCompatActivity {
         AddEditAlarmFragment addEditTaskFragment = (AddEditAlarmFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.contentFrame);
 
-        String taskId = getIntent().getStringExtra(AddEditAlarmFragment.ARGUMENT_EDIT_TASK_ID);
+        String alarmId = getIntent().getStringExtra(AddEditAlarmFragment.ARGUMENT_EDIT_ALARM_ID);
 
-        setToolbarTitle(taskId);
+        setToolbarTitle(alarmId);
 
         if (addEditTaskFragment == null) {
             addEditTaskFragment = AddEditAlarmFragment.newInstance();
 
-            if (getIntent().hasExtra(AddEditAlarmFragment.ARGUMENT_EDIT_TASK_ID)) {
+            if (getIntent().hasExtra(AddEditAlarmFragment.ARGUMENT_EDIT_ALARM_ID)) {
                 Bundle bundle = new Bundle();
-                bundle.putString(AddEditAlarmFragment.ARGUMENT_EDIT_TASK_ID, taskId);
+                bundle.putString(AddEditAlarmFragment.ARGUMENT_EDIT_ALARM_ID, alarmId);
                 addEditTaskFragment.setArguments(bundle);
             }
 
@@ -48,7 +48,11 @@ public class AddEditAlarmActivity extends AppCompatActivity {
                     addEditTaskFragment, R.id.contentFrame);
         }
 
-        mAddEditPresenter = new AddEditAlarmPresenter(this, addEditTaskFragment);
+        mAddEditPresenter = new AddEditAlarmPresenter(
+                this,
+                addEditTaskFragment,
+                alarmId
+        );
     }
 
     private void setToolbarTitle(@Nullable String taskId) {
