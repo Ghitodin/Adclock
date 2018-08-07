@@ -28,25 +28,25 @@ public class Alarm {
 
     @Nullable
     @ColumnInfo(name = "title")
-    private final String title;
+    private String title;
 
     @NonNull
     @ColumnInfo(name = "date")
-    private final Date date;
+    private Date date;
 
     @NonNull
     @ColumnInfo(name = "repeat_type")
-    private final RepeatType repeatType;
+    private RepeatType repeatType;
 
     @ColumnInfo(name = "custom_repeat_days")
-    private final int customRepeatDays;
+    private int customRepeatDays;
 
     @ColumnInfo(name = "is_active")
-    private final boolean isActive;
+    private boolean isActive;
 
     @NonNull
     @ColumnInfo(name = "ringtone")
-    private final String ringtone;
+    private String ringtone;
 
 
     public Alarm(@Nullable String id, @Nullable String title, @NonNull Date date,
@@ -104,4 +104,29 @@ public class Alarm {
     public String getRingtone() {
         return ringtone;
     }
+
+    public void setTitle(@Nullable String title) {
+        this.title = title;
+    }
+
+    public void setDate(@NonNull Date date) {
+        this.date = date;
+    }
+
+    public void setRepeatType(@NonNull RepeatType repeatType) {
+        this.repeatType = repeatType;
+    }
+
+    public void setCustomRepeatDays(int customRepeatDays) {
+        this.customRepeatDays = customRepeatDays;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public void setRingtone(@NonNull String ringtone) {
+        this.ringtone = ringtone;
+    }
+
 }
