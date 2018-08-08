@@ -1,4 +1,4 @@
-package com.crypt.adclock.addeditalarm.dialogs.ringtonepicker;
+package com.crypt.adclock.addeditalarm.dialogs.editlabel;
 
 import android.content.Context;
 import android.content.DialogInterface;

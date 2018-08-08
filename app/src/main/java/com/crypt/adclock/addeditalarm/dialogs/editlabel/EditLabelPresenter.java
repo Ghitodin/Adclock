@@ -1,9 +1,10 @@
-package com.crypt.adclock.addeditalarm.dialogs.ringtonepicker;
+package com.crypt.adclock.addeditalarm.dialogs.editlabel;
 
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import com.crypt.adclock.addeditalarm.dialogs.BaseAlertDialogPresenter;
+import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelDialog;
 
 
 public final class EditLabelPresenter extends BaseAlertDialogPresenter<EditLabelDialog> {

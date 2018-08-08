@@ -6,17 +6,14 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.crypt.adclock.R;
-import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.EditLabelDialog;
-import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.EditLabelPresenter;
+import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelDialog;
+import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelPresenter;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPresenter;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.RepeatType;
 
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Date;
 
 /**
  * Created by Ghito on 08-Mar-18.
