@@ -2,7 +2,6 @@ package com.crypt.adclock.addeditalarm;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,7 +22,7 @@ public class AddEditAlarmActivity extends AppCompatActivity {
         setContentView(R.layout.add_edit_alarm_activity);
 
         // Set up the toolbar.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -49,7 +48,7 @@ public class AddEditAlarmActivity extends AppCompatActivity {
                     addEditTaskFragment, R.id.contentFrame);
         }
 
-        mAddEditPresenter = new AddEditAlarmPresenter(addEditTaskFragment);
+        mAddEditPresenter = new AddEditAlarmPresenter(this, addEditTaskFragment);
     }
 
     private void setToolbarTitle(@Nullable String taskId) {
