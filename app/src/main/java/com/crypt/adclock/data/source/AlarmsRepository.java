@@ -86,21 +86,25 @@ public class AlarmsRepository implements AlarmsDataSource {
 
     @Override
     public void save(@NonNull Alarm alarm) {
-
+        mCachedAlarms.put(alarm.getId(), alarm);
+        mLocalDataSource.save(alarm);
     }
 
     @Override
     public void update(@NonNull Alarm alarm) {
-
+        mCachedAlarms.put(alarm.getId(), alarm);
+        mLocalDataSource.update(alarm);
     }
 
     @Override
     public void deleteAll() {
-
+        mCachedAlarms.clear();
+        mLocalDataSource.deleteAll();
     }
 
     @Override
     public void delete(@NonNull String alarmId) {
-
+        mCachedAlarms.remove(alarmId);
+        mLocalDataSource.delete(alarmId);
     }
 }
