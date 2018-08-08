@@ -33,6 +33,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintBottom_toTopOf="@+id/ll_settings_items"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
@@ -50,9 +51,12 @@
         android:id="@+id/amPmNumber"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/days"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:mnpEditable="false"
         app:mnpMaxValue="1"
         app:mnpMinValue="0"
@@ -64,28 +68,70 @@
         app:mnpWrapped="false" />
 
     <LinearLayout
-        android:id="@+id/ll_settings_items"
+        android:id="@+id/days"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:divider="@drawable/grey_horizontal_line"
-        android:orientation="vertical"
-        android:showDividers="beginning|end|middle"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/ll_settings_items"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/minutesNumberPicker">
 
-        <com.crypt.adclock.widgets.ClickableTextViewRow
-            android:id="@+id/clickable_repeat_mode_item"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/AnimatedRow"
-            app:additional_text="some_description"
-            app:txt_title="@string/repeat" />
+        <ToggleButton
+            android:id="@+id/day1"
+            style="@style/AlarmDayToggle" />
+
+        <ToggleButton
+            android:id="@+id/day2"
+            style="@style/AlarmDayToggle" />
+
+        <ToggleButton
+            android:id="@+id/day3"
+            style="@style/AlarmDayToggle" />
+
+        <ToggleButton
+            android:id="@+id/day4"
+            style="@style/AlarmDayToggle" />
+
+        <ToggleButton
+            android:id="@+id/day5"
+            style="@style/AlarmDayToggle" />
+
+        <ToggleButton
+            android:id="@+id/day6"
+            style="@style/AlarmDayToggle" />
+
+        <ToggleButton
+            android:id="@+id/day7"
+            style="@style/AlarmDayToggle" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_settings_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:divider="@drawable/grey_horizontal_line"
+        android:orientation="vertical"
+        android:showDividers="beginning|end|middle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.646">
 
         <com.crypt.adclock.widgets.ClickableTextViewRow
             android:id="@+id/clickable_ringtone_item"

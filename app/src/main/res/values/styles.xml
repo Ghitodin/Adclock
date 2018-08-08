@@ -22,4 +22,16 @@
     </style>
 
     <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <!-- Style for Toggle buttons with days of the week. -->
+    <style name="AlarmDayToggle" parent="SelectableButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="SelectableButton">
+        <item name="android:background">?selectableItemBackground</item>
+    </style>
 </resources>

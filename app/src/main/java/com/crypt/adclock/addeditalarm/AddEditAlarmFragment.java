@@ -2,6 +2,7 @@ package com.crypt.adclock.addeditalarm;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.ToggleButton;
 
 import com.crypt.adclock.R;
 import com.crypt.adclock.data.Alarm;
@@ -31,16 +33,15 @@ public class AddEditAlarmFragment extends Fragment implements
     MaterialNumberPicker mMinutesNumberPicker;
     MaterialNumberPicker mAmPmPicker;
 
-    ClickableTextViewRow mRepeatSettingsRow;
     ClickableTextViewRow mRingtoneSettingsRow;
     ClickableSwitchRow mVibroSettingsRow;
     ClickableTextViewRow mLabelSettingsRow;
 
+    ToggleButton mDay1;
+
     public static final String ARGUMENT_EDIT_ALARM_ID = "EDIT_ALARM_ID";
     private final int AM_INT = 0;
     private final int PM_INT = 1;
-
-    private final int RINGTONE_REQUEST_CODE = 5;
 
     private AddEditAlarmContract.Presenter mPresenter;
 
@@ -77,10 +78,14 @@ public class AddEditAlarmFragment extends Fragment implements
         mMinutesNumberPicker = root.findViewById(R.id.minutesNumberPicker);
         mAmPmPicker = root.findViewById(R.id.amPmNumber);
 
-        mRepeatSettingsRow = root.findViewById(R.id.clickable_repeat_mode_item);
         mRingtoneSettingsRow = root.findViewById(R.id.clickable_ringtone_item);
         mVibroSettingsRow = root.findViewById(R.id.clickable_switch_vibro_item);
         mLabelSettingsRow = root.findViewById(R.id.clickable_label_item);
+
+        mDay1 = root.findViewById(R.id.day1);
+
+        mDay1.setTextOn("Kok");
+        mDay1.setTextOff("Kek");
 
         NumberPicker.Formatter timeFormatter = new NumberPicker.Formatter() {
             @NonNull
@@ -106,9 +111,10 @@ public class AddEditAlarmFragment extends Fragment implements
         mMinutesNumberPicker.setFormatter(timeFormatter);
         mAmPmPicker.setFormatter(amPmFormatter);
 
-        mRepeatSettingsRow.setOnClickListener(this);
         mRingtoneSettingsRow.setOnClickListener(this);
         mLabelSettingsRow.setOnClickListener(this);
+
+        mDay1.setOnClickListener(this);
 
         return root;
     }
@@ -116,9 +122,6 @@ public class AddEditAlarmFragment extends Fragment implements
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clickable_repeat_mode_item:
-                mPresenter.editRepeatMode();
-                break;
             case R.id.clickable_ringtone_item:
                 mPresenter.pickRingtone();
                 break;
@@ -184,7 +187,6 @@ public class AddEditAlarmFragment extends Fragment implements
         dialog.setCancelable(true);
         dialog.show();
     }
-
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

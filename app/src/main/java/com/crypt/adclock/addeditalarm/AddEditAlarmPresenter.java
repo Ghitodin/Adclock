@@ -106,7 +106,8 @@ public class AddEditAlarmPresenter implements
                 }
         );
 
-        mEditLabelPresenter.show(mAlarm.getTitle(), "test_tag");
+        //mEditLabelPresenter.show(mAlarm.getTitle(), "test_tag");
+        mEditLabelPresenter.show("sds", "test_tag");
     }
 
     @Override

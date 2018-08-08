@@ -16,4 +16,11 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="ringtones">Ringtones</string>
+    <string name="sunday_capital">s</string>
+    <string name="saturday_capital">s</string>
+    <string name="monday_capital">m</string>
+    <string name="tuesday_capital">t</string>
+    <string name="wednesday_capital">w</string>
+    <string name="thursday_capital">t</string>
+    <string name="friday_capital">f</string>
 </resources>
