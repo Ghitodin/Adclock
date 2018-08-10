@@ -3,14 +3,18 @@ package com.crypt.adclock.addeditalarm;
 import android.content.Context;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import com.crypt.adclock.R;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPresenter;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.RepeatType;
+import com.crypt.adclock.data.source.AlarmsDataSource;
+import com.crypt.adclock.data.source.AlarmsRepository;
+
+import javax.inject.Inject;
 
 /**
  * Created by Ghito on 08-Mar-18.
@@ -19,15 +23,17 @@ import com.crypt.adclock.data.RepeatType;
 public class AddEditAlarmPresenter implements
         AddEditAlarmContract.Presenter {
     private Alarm mAlarm;
+    @Nullable
     private AddEditAlarmContract.View mView;
     private Context mContext;
+    private AlarmsDataSource mRepository;
 
     private RingtonePickerPresenter mRingtonePickerPresenter;
 
-    AddEditAlarmPresenter(Context context, AddEditAlarmContract.View view) {
-        mView = view;
+    @Inject
+    AddEditAlarmPresenter(@NonNull AlarmsRepository repository, @NonNull Context context) {
+        mRepository = repository;
         mContext = context;
-        mView.setPresenter(this);
     }
 
     @Override
@@ -57,7 +63,9 @@ public class AddEditAlarmPresenter implements
 
     @Override
     public void setLabel(String label) {
-        mView.updateView(mAlarm);
+        if (mView != null) {
+            mView.updateView(mAlarm);
+        }
     }
 
     @Override
@@ -66,21 +74,16 @@ public class AddEditAlarmPresenter implements
     }
 
     @Override
-    public void start() {
-        if (mView == null)
-            return;
-
-        mView.updateView(mAlarm);
-    }
-
-    @Override
     public void editRepeatMode() {
-        mView.showRepeatSettingsDialog();
+        if (mView != null) {
+            mView.showRepeatSettingsDialog();
+        }
     }
 
     @Override
     public void pickRingtone() {
-        mRingtonePickerPresenter = new RingtonePickerPresenter(
+        mRingtonePickerPresenter = new  RingtonePickerPresenter(
+                // TODO: Fix that:
                 ((AppCompatActivity) mContext).getSupportFragmentManager(),
                 new RingtonePickerDialog.OnRingtoneSelectedListener() {
                     @Override
@@ -98,13 +101,14 @@ public class AddEditAlarmPresenter implements
         // TODO Uncomment
         // String ringtone = mAlarm.getRingtone();
         String ringtone = "";
-        if (ringtone.isEmpty())
+        if (ringtone.isEmpty()) {
             // If ringtone is not specified, we take the default ringtone.
             selectedRingtoneUri =
                     RingtoneManager.getActualDefaultRingtoneUri(mContext,
                             RingtoneManager.TYPE_ALARM);
-        else
+        } else {
             selectedRingtoneUri = Uri.parse(ringtone);
+        }
 
         return selectedRingtoneUri;
     }
@@ -112,7 +116,18 @@ public class AddEditAlarmPresenter implements
     @Override
     public void editLabel() {
         // TODO Change hardcoded string to mAlarm.getLabel()
-        mView.showLabelInputDialog("kek");
+        if (mView != null) {
+            mView.showLabelInputDialog("kek");
+        }
     }
 
+    @Override
+    public void takeView(AddEditAlarmContract.View view) {
+        mView = view;
+    }
+
+    @Override
+    public void dropView() {
+        mView = null;
+    }
 }

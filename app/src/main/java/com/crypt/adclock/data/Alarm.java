@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 
 import com.crypt.adclock.util.DateConverter;
 
-import java.util.Date;
+import java.sql.Time;
 import java.util.UUID;
 
 /**
@@ -32,11 +32,11 @@ public class Alarm {
 
     @NonNull
     @ColumnInfo(name = "date")
-    private final Date date;
+    private final Time date;
 
     @NonNull
     @ColumnInfo(name = "repeat_type")
-    private final RepeatType repeatType;
+    private final int repeatType;
 
     @ColumnInfo(name = "custom_repeat_days")
     private final int customRepeatDays;
@@ -49,8 +49,8 @@ public class Alarm {
     private final String ringtone;
 
 
-    public Alarm(@Nullable String id, @Nullable String title, @NonNull Date date,
-                 @NonNull RepeatType repeatType, int customRepeatDays,
+    public Alarm(@Nullable String id, @Nullable String title, @NonNull Time date,
+                 @NonNull int repeatType, int customRepeatDays,
                  boolean isActive, String ringtone) {
         this.id = id;
         this.title = title;
@@ -65,8 +65,8 @@ public class Alarm {
      * Use this constructor to create a new active Alarm.
      */
     @Ignore
-    public Alarm(@Nullable String title, @NonNull Date date,
-                 @NonNull RepeatType repeatType, int customRepeatDays,
+    public Alarm(@Nullable String title, @NonNull Time date,
+                 @NonNull int repeatType, int customRepeatDays,
                  boolean isActive, String ringtone) {
         this(UUID.randomUUID().toString(), title, date, repeatType, customRepeatDays,
                 isActive, ringtone);
@@ -83,12 +83,12 @@ public class Alarm {
     }
 
     @NonNull
-    public Date getDate() {
+    public Time getDate() {
         return date;
     }
 
     @NonNull
-    public RepeatType getRepeatType() {
+    public int getRepeatType() {
         return repeatType;
     }
 

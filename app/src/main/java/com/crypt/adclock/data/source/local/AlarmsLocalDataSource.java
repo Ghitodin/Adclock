@@ -22,7 +22,7 @@ public class AlarmsLocalDataSource implements AlarmsDataSource {
     private final AppExecutors mExecutors;
 
     @Inject
-    AlarmsLocalDataSource(@NonNull AppExecutors executors, @NonNull AlarmsDao dao) {
+    public AlarmsLocalDataSource(@NonNull AppExecutors executors, @NonNull AlarmsDao dao) {
         mExecutors = executors;
         mDao = dao;
     }

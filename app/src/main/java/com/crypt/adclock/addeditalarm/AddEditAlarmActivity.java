@@ -3,18 +3,29 @@ package com.crypt.adclock.addeditalarm;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.crypt.adclock.R;
 import com.crypt.adclock.util.ActivityUtils;
 
-public class AddEditAlarmActivity extends AppCompatActivity {
+import javax.inject.Inject;
+
+import dagger.android.support.DaggerAppCompatActivity;
+
+public class AddEditAlarmActivity extends DaggerAppCompatActivity {
 
     public static final int REQUEST_ADD_TASK = 1;
     private ActionBar actionBar;
 
-    private AddEditAlarmPresenter mAddEditPresenter;
+    @Inject
+    AddEditAlarmContract.Presenter mAddEditPresenter;
+
+    @Inject
+    AddEditAlarmFragment mFragment;
+
+    @Nullable
+    @Inject
+    String mAlarmId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,27 +39,17 @@ public class AddEditAlarmActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
-        AddEditAlarmFragment addEditTaskFragment = (AddEditAlarmFragment) getSupportFragmentManager()
+        AddEditAlarmFragment addEditAlarmFragment = (AddEditAlarmFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.contentFrame);
 
-        String taskId = getIntent().getStringExtra(AddEditAlarmFragment.ARGUMENT_EDIT_TASK_ID);
+        setToolbarTitle(mAlarmId);
 
-        setToolbarTitle(taskId);
-
-        if (addEditTaskFragment == null) {
-            addEditTaskFragment = AddEditAlarmFragment.newInstance();
-
-            if (getIntent().hasExtra(AddEditAlarmFragment.ARGUMENT_EDIT_TASK_ID)) {
-                Bundle bundle = new Bundle();
-                bundle.putString(AddEditAlarmFragment.ARGUMENT_EDIT_TASK_ID, taskId);
-                addEditTaskFragment.setArguments(bundle);
-            }
+        if (addEditAlarmFragment == null) {
+            addEditAlarmFragment = mFragment;
 
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
-                    addEditTaskFragment, R.id.contentFrame);
+                    addEditAlarmFragment, R.id.contentFrame);
         }
-
-        mAddEditPresenter = new AddEditAlarmPresenter(this, addEditTaskFragment);
     }
 
     private void setToolbarTitle(@Nullable String taskId) {
