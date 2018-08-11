@@ -6,7 +6,10 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
+import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelDialog;
+import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelPresenter;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPresenter;
 import com.crypt.adclock.data.Alarm;
@@ -93,7 +96,6 @@ public class AddEditAlarmPresenter implements
                     public void onLabelSet(String label) {
                         mAlarm.setTitle(label);
                         mView.updateView(mAlarm);
-                        Log.d(TAG, "Label was set: " + label);
                     }
                 }
         );
@@ -123,7 +125,7 @@ public class AddEditAlarmPresenter implements
     private Uri getSelectedRingtoneUri() {
         Uri selectedRingtoneUri;
         String ringtone = mAlarm.getRingtone();
-        if (ringtone.isEmpty())
+        if (ringtone.isEmpty()) {
             // If ringtone is not specified, we take the default ringtone.
             selectedRingtoneUri =
                     RingtoneManager.getActualDefaultRingtoneUri(mContext,
@@ -135,12 +137,6 @@ public class AddEditAlarmPresenter implements
         return selectedRingtoneUri;
     }
 
-    @Override
-    public void editLabel() {
-        // TODO Change hardcoded string to mAlarm.getLabel()
-        if (mView != null) {
-            mView.showLabelInputDialog("kek");
-        }
     private boolean isNewAlarm() {
         return mAlarmId == null;
     }

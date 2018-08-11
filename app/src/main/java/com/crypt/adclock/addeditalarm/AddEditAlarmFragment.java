@@ -2,7 +2,6 @@ package com.crypt.adclock.addeditalarm;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,8 +48,6 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     public static final String ARGUMENT_EDIT_ALARM_ID = "EDIT_ALARM_ID";
     private final int AM_INT = 0;
     private final int PM_INT = 1;
-
-    private AddEditAlarmContract.Presenter mPresenter;
 
     private final int RINGTONE_REQUEST_CODE = 5;
 

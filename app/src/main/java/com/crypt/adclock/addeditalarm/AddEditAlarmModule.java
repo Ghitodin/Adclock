@@ -16,7 +16,7 @@ public abstract class AddEditAlarmModule {
     @ActivityScoped
     @Nullable
     static String provideAlarmId(AddEditAlarmActivity activity) {
-        return activity.getIntent().getStringExtra(AddEditAlarmFragment.ARGUMENT_EDIT_TASK_ID);
+        return activity.getIntent().getStringExtra(AddEditAlarmFragment.ARGUMENT_EDIT_ALARM_ID);
     }
 
     @FragmentScoped

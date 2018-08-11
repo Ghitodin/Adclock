@@ -108,14 +108,16 @@ public class Alarm {
     public void setTitle(@Nullable String title) {
         this.title = title;
     }
-
-    public void setDate(@NonNull Date date) {
+    /*
+    public void setDate(@NonNull Time date) {
         this.date = date;
     }
-
-    public void setRepeatType(@NonNull RepeatType repeatType) {
+    */
+    /*
+    public void setRepeatType(@NonNull int repeatType) {
         this.repeatType = repeatType;
     }
+    */
 
     public void setCustomRepeatDays(int customRepeatDays) {
         this.customRepeatDays = customRepeatDays;
