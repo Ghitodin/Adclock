@@ -2,24 +2,28 @@ package com.crypt.adclock.alarms;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.crypt.adclock.addeditalarm.AddEditAlarmActivity;
 import com.crypt.adclock.data.Alarm;
+import com.crypt.adclock.data.source.AlarmsDataSource;
 import com.crypt.adclock.data.source.AlarmsRepository;
+import com.crypt.adclock.di.ActivityScoped;
+
+import javax.inject.Inject;
 
 /**
  * Created by Ghito on 08-Mar-18.
  */
-
+@ActivityScoped
 public class AlarmsPresenter implements AlarmsContract.Presenter {
+    @Nullable
+    private AlarmsContract.View mAlarmsView;
+    private final AlarmsDataSource mRepository;
 
-    private final AlarmsContract.View mTasksView;
-
-    public AlarmsPresenter(@NonNull AlarmsRepository tasksRepository,
-                          @NonNull AlarmsContract.View tasksView) {
-        mTasksView = tasksView;
-
-        mTasksView.setPresenter(this);
+    @Inject
+    AlarmsPresenter(@NonNull AlarmsRepository repository) {
+        mRepository = repository;
     }
 
     @Override
@@ -37,7 +41,9 @@ public class AlarmsPresenter implements AlarmsContract.Presenter {
 
     @Override
     public void addNewAlarm() {
-        mTasksView.showAddAlarm();
+        if (mAlarmsView != null) {
+            mAlarmsView.showAddAlarm();
+        }
     }
 
     @Override
@@ -46,7 +52,13 @@ public class AlarmsPresenter implements AlarmsContract.Presenter {
     }
 
     @Override
-    public void start() {
+    public void takeView(AlarmsContract.View view) {
+        mAlarmsView = view;
+        // TODO: Load alarms from the repository
+    }
 
+    @Override
+    public void dropView() {
+        mAlarmsView = null;
     }
 }

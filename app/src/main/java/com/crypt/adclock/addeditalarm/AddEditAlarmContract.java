@@ -21,7 +21,7 @@ public interface AddEditAlarmContract {
 
     }
 
-    interface Presenter extends BasePresenter {
+    interface Presenter extends BasePresenter<View> {
 
         void saveAlarm();
 

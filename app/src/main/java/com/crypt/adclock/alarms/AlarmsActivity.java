@@ -1,7 +1,6 @@
 package com.crypt.adclock.alarms;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,8 +8,16 @@ import android.view.MenuItem;
 import com.crypt.adclock.R;
 import com.crypt.adclock.util.ActivityUtils;
 
-public class AlarmsActivity extends AppCompatActivity {
-    private AlarmsPresenter mAlarmsPresenter;
+import javax.inject.Inject;
+
+import dagger.Lazy;
+import dagger.android.support.DaggerAppCompatActivity;
+
+public class AlarmsActivity extends DaggerAppCompatActivity {
+    @Inject
+    AlarmsContract.Presenter mAlarmsPresenter;
+    @Inject
+    Lazy<AlarmsFragment> mAlarmsFragmentProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,13 +30,10 @@ public class AlarmsActivity extends AppCompatActivity {
                 (AlarmsFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (tasksFragment == null) {
             // Create the fragment
-            tasksFragment = AlarmsFragment.newInstance();
+            tasksFragment = mAlarmsFragmentProvider.get();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), tasksFragment, R.id.contentFrame);
         }
-
-        // Create the presenter
-        mAlarmsPresenter = new AlarmsPresenter(null, tasksFragment);
     }
 
     @Override

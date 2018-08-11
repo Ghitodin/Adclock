@@ -14,14 +14,17 @@ import java.util.List;
 
 public interface AlarmsContract {
     interface View extends BaseView<Presenter> {
+
         void showAlarms(List<Alarm> tasks);
 
         void showAddAlarm();
 
         void showNoAlarms();
+
     }
 
-    interface Presenter extends BasePresenter {
+    interface Presenter extends BasePresenter<View> {
+
         void result(int requestCode, int resultCode);
 
         void loadAlarms(boolean forceUpdate);
@@ -29,5 +32,6 @@ public interface AlarmsContract {
         void addNewAlarm();
 
         void activateAlarm(@NonNull Alarm activeTask);
+
     }
 }

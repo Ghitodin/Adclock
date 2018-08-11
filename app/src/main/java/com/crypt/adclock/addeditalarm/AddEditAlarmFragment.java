@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +19,22 @@ import android.widget.ToggleButton;
 
 import com.crypt.adclock.R;
 import com.crypt.adclock.data.Alarm;
+import com.crypt.adclock.di.ActivityScoped;
 import com.crypt.adclock.widgets.ClickableSwitchRow;
 import com.crypt.adclock.widgets.ClickableTextViewRow;
 import com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker;
 
+import javax.inject.Inject;
 
-public class AddEditAlarmFragment extends Fragment implements
+import dagger.android.support.DaggerFragment;
+
+@ActivityScoped
+public class AddEditAlarmFragment extends DaggerFragment implements
         AddEditAlarmContract.View,
         View.OnClickListener {
+
+    @Inject
+    AddEditAlarmContract.Presenter mPresenter;
 
     MaterialNumberPicker mHoursNumberPicker;
     MaterialNumberPicker mMinutesNumberPicker;
@@ -45,15 +52,13 @@ public class AddEditAlarmFragment extends Fragment implements
 
     private AddEditAlarmContract.Presenter mPresenter;
 
+    private final int RINGTONE_REQUEST_CODE = 5;
+
     private OnFragmentInteractionListener mListener;
 
+    @Inject
     public AddEditAlarmFragment() {
         // Required empty public constructor
-    }
-
-    @NonNull
-    public static AddEditAlarmFragment newInstance() {
-        return new AddEditAlarmFragment();
     }
 
     @Override
@@ -117,6 +122,18 @@ public class AddEditAlarmFragment extends Fragment implements
         mDay1.setOnClickListener(this);
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.mPresenter.takeView(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.dropView();
     }
 
     @Override

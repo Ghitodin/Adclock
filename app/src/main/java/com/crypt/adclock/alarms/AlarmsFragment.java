@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,17 +21,24 @@ import android.widget.TextView;
 import com.crypt.adclock.R;
 import com.crypt.adclock.addeditalarm.AddEditAlarmActivity;
 import com.crypt.adclock.data.Alarm;
+import com.crypt.adclock.di.ActivityScoped;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.android.support.DaggerFragment;
+
 import static android.support.v4.util.Preconditions.checkNotNull;
 
+@ActivityScoped
+public class AlarmsFragment extends DaggerFragment implements AlarmsContract.View {
 
-public class AlarmsFragment extends Fragment implements AlarmsContract.View {
+    @Inject
+    AlarmsContract.Presenter mPresenter;
 
     private AlarmItemListener listener;
-    private AlarmsContract.Presenter presenter;
     private AlarmsAdapter listAdapter;
     private LinearLayout alarmsView;
     private View noAlarmsView;
@@ -40,10 +46,7 @@ public class AlarmsFragment extends Fragment implements AlarmsContract.View {
     private TextView noAlarmsMainView;
     private TextView noAlarmsAddView;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+    @Inject
     public AlarmsFragment() {
     }
 
@@ -61,18 +64,24 @@ public class AlarmsFragment extends Fragment implements AlarmsContract.View {
     @Override
     public void onResume() {
         super.onResume();
-        this.presenter.start();
+        this.mPresenter.takeView(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.dropView();
     }
 
     @SuppressLint("RestrictedApi")
     @Override
     public void setPresenter(@NonNull AlarmsContract.Presenter presenter) {
-        this.presenter = checkNotNull(presenter);
+        this.mPresenter = checkNotNull(presenter);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        this.presenter.result(requestCode, resultCode);
+        this.mPresenter.result(requestCode, resultCode);
     }
 
     @Override
@@ -106,7 +115,7 @@ public class AlarmsFragment extends Fragment implements AlarmsContract.View {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.addNewAlarm();
+                mPresenter.addNewAlarm();
             }
         });
 

@@ -3,6 +3,7 @@ package com.crypt.adclock.addeditalarm.dialogs;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 
@@ -14,6 +15,7 @@ public abstract class BaseAlertDialogFragment extends AppCompatDialogFragment {
 
     protected abstract void onOkPressed();
 
+    @NonNull
     @Override
     public final Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
