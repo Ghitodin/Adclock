@@ -1,26 +1,25 @@
 package com.crypt.adclock.addeditalarm.dialogs.editlabel;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
 import com.crypt.adclock.R;
-import com.crypt.adclock.addeditalarm.dialogs.BaseAlertDialogFragment;
 
 
-public class EditLabelDialog extends BaseAlertDialogFragment{
+public class EditLabelDialog extends AppCompatDialogFragment {
     private EditText mEditText;
-    private OnLabelSetListener mOnLabelSetListener;
+    private EditLabelContract.View.OnLabelSetListener mOnLabelSetListener;
     private CharSequence mInitialText;
 
-    public interface OnLabelSetListener {
-        void onLabelSet(String label);
-    }
-
-    public static EditLabelDialog newInstance(OnLabelSetListener l, CharSequence text) {
+    public static EditLabelDialog newInstance(EditLabelContract.View.OnLabelSetListener l, CharSequence text) {
         EditLabelDialog dialog = new EditLabelDialog();
         dialog.mOnLabelSetListener = l;
         dialog.mInitialText = text;
@@ -28,7 +27,9 @@ public class EditLabelDialog extends BaseAlertDialogFragment{
     }
 
     @Override
-    protected AlertDialog createFrom(AlertDialog.Builder builder) {
+    public Dialog onCreateDialog(Bundle savedInstance) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
         mEditText = new AppCompatEditText(getActivity());
         // Views must have IDs set to automatically save instance state
         mEditText.setId(R.id.label);
@@ -37,10 +38,23 @@ public class EditLabelDialog extends BaseAlertDialogFragment{
                 EditorInfo.TYPE_CLASS_TEXT // Needed or else we won't get automatic spacing
                         | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES);         // between words
 
-        builder.setTitle(R.string.label)
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // So we just call parent`s method here
+                        dismiss();
+                    }
+                })
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onOkPressed();
+                    }
+                })
+                .setTitle(R.string.label)
                 .setView(mEditText);
 
-        AlertDialog dialog = super.createFrom(builder);
+        AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
@@ -53,8 +67,7 @@ public class EditLabelDialog extends BaseAlertDialogFragment{
         return dialog;
     }
 
-    @Override
-    protected void onOkPressed() {
+    private void onOkPressed() {
         if (mOnLabelSetListener != null) {
             // If we passed the text back as an Editable (subtype of CharSequence
             // used in EditText), then there may be text formatting left in there,
@@ -64,7 +77,7 @@ public class EditLabelDialog extends BaseAlertDialogFragment{
         dismiss();
     }
 
-    public void setOnLabelSetListener(OnLabelSetListener l) {
+    public void setOnLabelSetListener(EditLabelContract.View.OnLabelSetListener l) {
         mOnLabelSetListener = l;
     }
 

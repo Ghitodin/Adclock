@@ -1,34 +1,35 @@
 package com.crypt.adclock.addeditalarm.dialogs.editlabel;
 
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatDialogFragment;
+import android.text.Editable;
 import android.util.Log;
 
-import com.crypt.adclock.addeditalarm.dialogs.BaseAlertDialogPresenter;
-import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelDialog;
 
-
-public final class EditLabelPresenter extends BaseAlertDialogPresenter<EditLabelDialog> {
+public final class EditLabelPresenter implements EditLabelContract.Presenter{
     private static final String TAG = "EditLabelPresenter";
 
-    private final EditLabelDialog.OnLabelSetListener mListener;
+    private final EditLabelContract.View.OnLabelSetListener mListener;
+    private FragmentManager mFragmentManager;
 
-    public EditLabelPresenter(FragmentManager fragmentManager, EditLabelDialog.OnLabelSetListener listener) {
-        super(fragmentManager);
+    public EditLabelPresenter(FragmentManager fragmentManager, EditLabelContract.View.OnLabelSetListener
+            listener) {
+        mFragmentManager = fragmentManager;
         mListener = listener;
     }
 
     public void show(CharSequence initialText, String tag) {
         EditLabelDialog dialog = EditLabelDialog.newInstance(mListener, initialText);
-        show(dialog, tag);
+        dialog.show(mFragmentManager, tag);
     }
 
     @Override
-    public void tryRestoreCallback(String tag) {
-        EditLabelDialog labelDialog = findDialog(tag);
-        if (labelDialog != null) {
-            Log.i(TAG, "Restoring add label callback");
-            labelDialog.setOnLabelSetListener(mListener);
-        }
+    public void takeView(EditLabelContract.View view) {
+
     }
 
+    @Override
+    public void dropView() {
+
+    }
 }

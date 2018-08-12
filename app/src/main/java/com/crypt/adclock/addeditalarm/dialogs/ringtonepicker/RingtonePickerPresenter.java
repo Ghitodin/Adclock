@@ -2,30 +2,32 @@ package com.crypt.adclock.addeditalarm.dialogs.ringtonepicker;
 
 import android.net.Uri;
 import android.support.v4.app.FragmentManager;
-import com.crypt.adclock.addeditalarm.dialogs.BaseAlertDialogPresenter;
 
-public class RingtonePickerPresenter
-        extends BaseAlertDialogPresenter<RingtonePickerDialog> {
+public class RingtonePickerPresenter implements RingtoneDialogContract.Presenter {
 
-    private final RingtonePickerDialog.OnRingtoneSelectedListener mListener;
+    private RingtonePickerDialog.OnRingtoneSelectedListener mListener;
+    private RingtoneDialogContract.View mView;
+    private FragmentManager mFragmentManager;
 
     public RingtonePickerPresenter(FragmentManager fragmentManager,
                                    RingtonePickerDialog.OnRingtoneSelectedListener l) {
-        super(fragmentManager);
+        mFragmentManager = fragmentManager;
         mListener = l;
     }
 
+    @Override
     public void show(Uri initialUri, String tag) {
         RingtonePickerDialog dialog = RingtonePickerDialog.newInstance(mListener, initialUri);
-        show(dialog, tag);
+        dialog.show(mFragmentManager, tag);
     }
 
     @Override
-    public void tryRestoreCallback(String tag) {
-        RingtonePickerDialog dialog = findDialog(tag);
-        if (dialog != null) {
-            dialog.setOnRingtoneSelectedListener(mListener);
-        }
+    public void takeView(RingtoneDialogContract.View view) {
+        mView = view;
     }
 
+    @Override
+    public void dropView() {
+        mView = null;
+    }
 }

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelContract;
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelDialog;
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelPresenter;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
@@ -91,7 +92,7 @@ public class AddEditAlarmPresenter implements
     public void editLabel() {
         mEditLabelPresenter = new EditLabelPresenter(
                 ((AppCompatActivity) mContext).getSupportFragmentManager(),
-                new EditLabelDialog.OnLabelSetListener() {
+                new EditLabelContract.View.OnLabelSetListener(){
                     @Override
                     public void onLabelSet(String label) {
                         mAlarm.setTitle(label);

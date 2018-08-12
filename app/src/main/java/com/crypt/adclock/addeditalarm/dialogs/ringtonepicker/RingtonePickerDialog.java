@@ -1,5 +1,7 @@
 package com.crypt.adclock.addeditalarm.dialogs.ringtonepicker;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.media.RingtoneManager;
@@ -7,22 +9,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialogFragment;
 
 import com.crypt.adclock.R;
-import com.crypt.adclock.addeditalarm.dialogs.BaseAlertDialogFragment;
 import com.crypt.adclock.util.RingtoneLoop;
 
-public class RingtonePickerDialog extends BaseAlertDialogFragment {
+public class RingtonePickerDialog extends AppCompatDialogFragment
+                implements RingtoneDialogContract.View {
     private static final String KEY_RINGTONE_URI = "key_ringtone_uri";
 
     private RingtoneManager mRingtoneManager;
     private OnRingtoneSelectedListener mOnRingtoneSelectedListener;
+    private RingtonePickerPresenter mPresenter;
     private Uri mRingtoneUri;
     private RingtoneLoop mRingtone;
-
-    public interface OnRingtoneSelectedListener {
-        void onRingtoneSelected(Uri ringtoneUri);
-    }
 
     /**
      * @param ringtoneUri the URI of the ringtone to show as initially selected
@@ -45,7 +45,12 @@ public class RingtonePickerDialog extends BaseAlertDialogFragment {
     }
 
     @Override
-    protected AlertDialog createFrom(AlertDialog.Builder builder) {
+    public final Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        return createFrom(builder);
+    }
+
+    private AlertDialog createFrom(AlertDialog.Builder builder) {
         // TODO: We set the READ_EXTERNAL_STORAGE permission. Verify that this includes the user's
         // custom ringtone files.
         Cursor cursor = mRingtoneManager.getCursor();
@@ -53,20 +58,45 @@ public class RingtonePickerDialog extends BaseAlertDialogFragment {
         String labelColumn = cursor.getColumnName(RingtoneManager.TITLE_COLUMN_INDEX);
 
         builder.setTitle(R.string.ringtones)
-                .setSingleChoiceItems(cursor, checkedItem,
-                        labelColumn, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (mRingtone != null) {
-                            destroyLocalPlayer();
-                        }
-                        // Here, 'which' param refers to the position of the item clicked.
-                        mRingtoneUri = mRingtoneManager.getRingtoneUri(which);
-                        mRingtone = new RingtoneLoop(getActivity(), mRingtoneUri);
-                        mRingtone.play();
+                        // So we just call parent`s method here
+                        dismiss();
                     }
-                });
-        return super.createFrom(builder);
+                })
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onOkPressed();
+                    }
+                })
+                .setSingleChoiceItems(cursor, checkedItem,
+                        labelColumn, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (mRingtone != null) {
+                                    destroyLocalPlayer();
+                                }
+                                // Here, 'which' param refers to the position of the item clicked.
+                                mRingtoneUri = mRingtoneManager.getRingtoneUri(which);
+                                mRingtone = new RingtoneLoop(getActivity(), mRingtoneUri);
+                                mRingtone.play();
+                            }
+                        });
+        return builder.create();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mPresenter.takeView(this);
+    }
+
+    @Override
+    public void onDetach() {
+        mPresenter.dropView();
+        super.onDetach();
     }
 
     @Override
@@ -81,8 +111,7 @@ public class RingtonePickerDialog extends BaseAlertDialogFragment {
         outState.putParcelable(KEY_RINGTONE_URI, mRingtoneUri);
     }
 
-    @Override
-    protected void onOkPressed() {
+    private void onOkPressed() {
         if (mOnRingtoneSelectedListener != null) {
             // Here, 'which' param refers to the position of the item clicked.
             mOnRingtoneSelectedListener.onRingtoneSelected(mRingtoneUri);
@@ -95,11 +124,17 @@ public class RingtonePickerDialog extends BaseAlertDialogFragment {
         mOnRingtoneSelectedListener = onRingtoneSelectedListener;
     }
 
+    @Override
+    public void setPresenter(RingtoneDialogContract.Presenter presenter) {
+
+    }
+
     private void destroyLocalPlayer() {
         if (mRingtone != null) {
             mRingtone.stop();
             mRingtone = null;
         }
     }
+
 
 }
