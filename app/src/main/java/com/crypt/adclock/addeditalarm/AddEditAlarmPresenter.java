@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.support.v4.app.FragmentManager;
 
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelContract;
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelDialog;
@@ -31,6 +32,8 @@ public class AddEditAlarmPresenter implements
     private AddEditAlarmContract.View mView;
     private Context mContext;
     private AlarmsDataSource mRepository;
+    @Inject
+    FragmentManager mFragmentManager;
 
     @Nullable
     private String mAlarmId;
@@ -108,8 +111,7 @@ public class AddEditAlarmPresenter implements
     @Override
     public void pickRingtone() {
         mRingtonePickerPresenter = new  RingtonePickerPresenter(
-                // TODO: Fix that:
-                ((AppCompatActivity) mContext).getSupportFragmentManager(),
+                mFragmentManager,
                 new RingtonePickerDialog.OnRingtoneSelectedListener() {
                     @Override
                     public void onRingtoneSelected(Uri ringtoneUri) {

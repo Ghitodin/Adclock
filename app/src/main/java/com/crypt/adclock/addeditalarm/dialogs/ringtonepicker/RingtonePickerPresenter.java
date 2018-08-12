@@ -3,12 +3,14 @@ package com.crypt.adclock.addeditalarm.dialogs.ringtonepicker;
 import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 
+import javax.inject.Inject;
 public class RingtonePickerPresenter implements RingtoneDialogContract.Presenter {
 
     private RingtonePickerDialog.OnRingtoneSelectedListener mListener;
     private RingtoneDialogContract.View mView;
     private FragmentManager mFragmentManager;
 
+    @Inject
     public RingtonePickerPresenter(FragmentManager fragmentManager,
                                    RingtonePickerDialog.OnRingtoneSelectedListener l) {
         mFragmentManager = fragmentManager;
