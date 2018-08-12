@@ -1,6 +1,7 @@
 package com.crypt.adclock.addeditalarm;
 
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 
 import com.crypt.adclock.di.ActivityScoped;
 import com.crypt.adclock.di.FragmentScoped;
@@ -17,6 +18,12 @@ public abstract class AddEditAlarmModule {
     @Nullable
     static String provideAlarmId(AddEditAlarmActivity activity) {
         return activity.getIntent().getStringExtra(AddEditAlarmFragment.ARGUMENT_EDIT_TASK_ID);
+    }
+
+    @Provides
+    @ActivityScoped
+    static FragmentManager provideFragmentManager(AddEditAlarmActivity activity) {
+        return activity.getSupportFragmentManager();
     }
 
     @FragmentScoped

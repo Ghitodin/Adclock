@@ -5,7 +5,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentManager;
 
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPresenter;
@@ -27,6 +27,8 @@ public class AddEditAlarmPresenter implements
     private AddEditAlarmContract.View mView;
     private Context mContext;
     private AlarmsDataSource mRepository;
+    @Inject
+    FragmentManager mFragmentManager;
 
     private RingtonePickerPresenter mRingtonePickerPresenter;
 
@@ -83,8 +85,7 @@ public class AddEditAlarmPresenter implements
     @Override
     public void pickRingtone() {
         mRingtonePickerPresenter = new  RingtonePickerPresenter(
-                // TODO: Fix that:
-                ((AppCompatActivity) mContext).getSupportFragmentManager(),
+                mFragmentManager,
                 new RingtonePickerDialog.OnRingtoneSelectedListener() {
                     @Override
                     public void onRingtoneSelected(Uri ringtoneUri) {
