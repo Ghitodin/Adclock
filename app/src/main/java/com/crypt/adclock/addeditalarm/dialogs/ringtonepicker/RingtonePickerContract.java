@@ -5,7 +5,7 @@ import android.net.Uri;
 import com.crypt.adclock.BasePresenter;
 import com.crypt.adclock.BaseView;
 
-public interface RingtoneDialogContract {
+public interface RingtonePickerContract {
 
     interface View extends BaseView<Presenter> {
 

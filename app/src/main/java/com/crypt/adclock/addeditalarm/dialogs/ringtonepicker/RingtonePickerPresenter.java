@@ -6,15 +6,15 @@ import android.support.v4.app.FragmentManager;
 import javax.inject.Inject;
 
 public class RingtonePickerPresenter implements
-        RingtoneDialogContract.Presenter {
+        RingtonePickerContract.Presenter {
 
-    private RingtoneDialogContract.View.OnRingtoneSelectedListener mListener;
-    private RingtoneDialogContract.View mView;
+    private RingtonePickerContract.View.OnRingtoneSelectedListener mListener;
+    private RingtonePickerContract.View mView;
     private FragmentManager mFragmentManager;
 
     @Inject
     public RingtonePickerPresenter(FragmentManager fragmentManager,
-                                   RingtoneDialogContract.View.OnRingtoneSelectedListener l) {
+                                   RingtonePickerContract.View.OnRingtoneSelectedListener l) {
         mFragmentManager = fragmentManager;
         mListener = l;
     }
@@ -26,7 +26,7 @@ public class RingtonePickerPresenter implements
     }
 
     @Override
-    public void takeView(RingtoneDialogContract.View view) {
+    public void takeView(RingtonePickerContract.View view) {
         mView = view;
     }
 

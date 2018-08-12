@@ -6,14 +6,11 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.support.v4.app.FragmentManager;
 
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelContract;
-import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelDialog;
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelPresenter;
-import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtoneDialogContract;
-import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
+import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerContract;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPresenter;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.RepeatType;
@@ -113,7 +110,7 @@ public class AddEditAlarmPresenter implements
     public void pickRingtone() {
         mRingtonePickerPresenter = new RingtonePickerPresenter(
                 mFragmentManager,
-                new RingtoneDialogContract.View.OnRingtoneSelectedListener() {
+                new RingtonePickerContract.View.OnRingtoneSelectedListener() {
                     @Override
                     public void onRingtoneSelected(Uri ringtoneUri) {
                         mAlarm.setRingtone(ringtoneUri.toString());

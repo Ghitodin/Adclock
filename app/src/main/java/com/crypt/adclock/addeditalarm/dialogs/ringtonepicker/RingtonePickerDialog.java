@@ -1,7 +1,6 @@
 package com.crypt.adclock.addeditalarm.dialogs.ringtonepicker;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.media.RingtoneManager;
@@ -15,7 +14,7 @@ import com.crypt.adclock.R;
 import com.crypt.adclock.util.RingtoneLoop;
 
 public class RingtonePickerDialog extends AppCompatDialogFragment implements
-        RingtoneDialogContract.View {
+        RingtonePickerContract.View {
     private static final String KEY_RINGTONE_URI = "key_ringtone_uri";
 
     private RingtoneManager mRingtoneManager;
@@ -115,13 +114,13 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
         dismiss();
     }
 
-    public void setOnRingtoneSelectedListener(RingtoneDialogContract.View.OnRingtoneSelectedListener
+    public void setOnRingtoneSelectedListener(RingtonePickerContract.View.OnRingtoneSelectedListener
                                                       onRingtoneSelectedListener) {
         mOnRingtoneSelectedListener = onRingtoneSelectedListener;
     }
 
     @Override
-    public void setPresenter(RingtoneDialogContract.Presenter presenter) {
+    public void setPresenter(RingtonePickerContract.Presenter presenter) {
 
     }
 
