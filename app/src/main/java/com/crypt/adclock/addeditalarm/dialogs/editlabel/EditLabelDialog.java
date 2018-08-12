@@ -14,16 +14,30 @@ import android.widget.EditText;
 import com.crypt.adclock.R;
 
 
-public class EditLabelDialog extends AppCompatDialogFragment {
+public class EditLabelDialog extends AppCompatDialogFragment implements
+        EditLabelContract.View {
     private EditText mEditText;
-    private EditLabelContract.View.OnLabelSetListener mOnLabelSetListener;
+    private OnLabelSetListener mOnLabelSetListener;
     private CharSequence mInitialText;
+    private EditLabelContract.Presenter mPresenter;
 
-    public static EditLabelDialog newInstance(EditLabelContract.View.OnLabelSetListener l, CharSequence text) {
+    public static EditLabelDialog newInstance(OnLabelSetListener l, CharSequence text) {
         EditLabelDialog dialog = new EditLabelDialog();
         dialog.mOnLabelSetListener = l;
         dialog.mInitialText = text;
         return dialog;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.takeView(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        mPresenter.dropView();
+        super.onDestroy();
     }
 
     @Override
@@ -39,12 +53,12 @@ public class EditLabelDialog extends AppCompatDialogFragment {
                         | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES);         // between words
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // So we just call parent`s method here
-                        dismiss();
-                    }
-                })
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // So we just call parent`s method here
+                dismiss();
+            }
+        })
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -77,8 +91,12 @@ public class EditLabelDialog extends AppCompatDialogFragment {
         dismiss();
     }
 
-    public void setOnLabelSetListener(EditLabelContract.View.OnLabelSetListener l) {
+    public void setOnLabelSetListener(OnLabelSetListener l) {
         mOnLabelSetListener = l;
     }
 
+    @Override
+    public void setPresenter(EditLabelContract.Presenter presenter) {
+
+    }
 }

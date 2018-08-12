@@ -4,15 +4,17 @@ import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 
 import javax.inject.Inject;
-public class RingtonePickerPresenter implements RingtoneDialogContract.Presenter {
 
-    private RingtonePickerDialog.OnRingtoneSelectedListener mListener;
+public class RingtonePickerPresenter implements
+        RingtoneDialogContract.Presenter {
+
+    private RingtoneDialogContract.View.OnRingtoneSelectedListener mListener;
     private RingtoneDialogContract.View mView;
     private FragmentManager mFragmentManager;
 
     @Inject
     public RingtonePickerPresenter(FragmentManager fragmentManager,
-                                   RingtonePickerDialog.OnRingtoneSelectedListener l) {
+                                   RingtoneDialogContract.View.OnRingtoneSelectedListener l) {
         mFragmentManager = fragmentManager;
         mListener = l;
     }

@@ -14,15 +14,15 @@ import android.support.v7.app.AppCompatDialogFragment;
 import com.crypt.adclock.R;
 import com.crypt.adclock.util.RingtoneLoop;
 
-public class RingtonePickerDialog extends AppCompatDialogFragment
-                implements RingtoneDialogContract.View {
+public class RingtonePickerDialog extends AppCompatDialogFragment implements
+        RingtoneDialogContract.View {
     private static final String KEY_RINGTONE_URI = "key_ringtone_uri";
 
     private RingtoneManager mRingtoneManager;
     private OnRingtoneSelectedListener mOnRingtoneSelectedListener;
-    private RingtonePickerPresenter mPresenter;
     private Uri mRingtoneUri;
     private RingtoneLoop mRingtone;
+    RingtonePickerPresenter mPresenter;
 
     /**
      * @param ringtoneUri the URI of the ringtone to show as initially selected
@@ -88,27 +88,23 @@ public class RingtonePickerDialog extends AppCompatDialogFragment
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mPresenter.takeView(this);
-    }
-
-    @Override
-    public void onDetach() {
-        mPresenter.dropView();
-        super.onDetach();
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        destroyLocalPlayer();
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_RINGTONE_URI, mRingtoneUri);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mPresenter != null)
+            mPresenter.takeView(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mPresenter != null)
+            mPresenter.dropView();
+        super.onDestroy();
     }
 
     private void onOkPressed() {
@@ -119,7 +115,7 @@ public class RingtonePickerDialog extends AppCompatDialogFragment
         dismiss();
     }
 
-    public void setOnRingtoneSelectedListener(OnRingtoneSelectedListener
+    public void setOnRingtoneSelectedListener(RingtoneDialogContract.View.OnRingtoneSelectedListener
                                                       onRingtoneSelectedListener) {
         mOnRingtoneSelectedListener = onRingtoneSelectedListener;
     }
@@ -135,6 +131,5 @@ public class RingtonePickerDialog extends AppCompatDialogFragment
             mRingtone = null;
         }
     }
-
 
 }

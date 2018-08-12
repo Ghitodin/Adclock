@@ -6,10 +6,12 @@ import android.text.Editable;
 import android.util.Log;
 
 
-public final class EditLabelPresenter implements EditLabelContract.Presenter{
+public final class EditLabelPresenter implements
+        EditLabelContract.Presenter {
     private static final String TAG = "EditLabelPresenter";
 
     private final EditLabelContract.View.OnLabelSetListener mListener;
+    private EditLabelContract.View mView;
     private FragmentManager mFragmentManager;
 
     public EditLabelPresenter(FragmentManager fragmentManager, EditLabelContract.View.OnLabelSetListener
@@ -25,11 +27,11 @@ public final class EditLabelPresenter implements EditLabelContract.Presenter{
 
     @Override
     public void takeView(EditLabelContract.View view) {
-
+        mView = view;
     }
 
     @Override
     public void dropView() {
-
+        mView = null;
     }
 }
