@@ -19,6 +19,8 @@ public interface AddEditAlarmContract {
 
         void showLabelInputDialog(String currentLabel);
 
+        void showPickRingtoneDialog();
+
     }
 
     interface Presenter extends BasePresenter<View> {
@@ -38,8 +40,6 @@ public interface AddEditAlarmContract {
         void setVibrateMode(boolean isVibrateOn);
 
         void editRepeatMode();
-
-        void pickRingtone();
 
         void editLabel();
     }

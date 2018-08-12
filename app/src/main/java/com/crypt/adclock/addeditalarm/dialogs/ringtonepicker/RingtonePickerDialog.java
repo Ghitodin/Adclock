@@ -7,30 +7,39 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 
 import com.crypt.adclock.R;
 import com.crypt.adclock.util.RingtoneLoop;
 
+import javax.inject.Inject;
+
 public class RingtonePickerDialog extends AppCompatDialogFragment implements
         RingtonePickerContract.View {
     private static final String KEY_RINGTONE_URI = "key_ringtone_uri";
 
     private RingtoneManager mRingtoneManager;
-    private OnRingtoneSelectedListener mOnRingtoneSelectedListener;
     private Uri mRingtoneUri;
     private RingtoneLoop mRingtone;
+    @Inject
     RingtonePickerPresenter mPresenter;
+    @Inject
+    FragmentManager mFragmentManager;
 
     /**
      * @param ringtoneUri the URI of the ringtone to show as initially selected
      */
-    public static RingtonePickerDialog newInstance(OnRingtoneSelectedListener l, Uri ringtoneUri) {
+    public static RingtonePickerDialog newInstance(Uri ringtoneUri) {
         RingtonePickerDialog dialog = new RingtonePickerDialog();
-        dialog.mOnRingtoneSelectedListener = l;
         dialog.mRingtoneUri = ringtoneUri;
         return dialog;
+    }
+
+    @Inject
+    public RingtonePickerDialog() {
+
     }
 
     @Override
@@ -107,16 +116,10 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
     }
 
     private void onOkPressed() {
-        if (mOnRingtoneSelectedListener != null) {
-            // Here, 'which' param refers to the position of the item clicked.
-            mOnRingtoneSelectedListener.onRingtoneSelected(mRingtoneUri);
+        if (mPresenter != null) {
+            mPresenter.selectRingtone(mRingtoneUri);
         }
         dismiss();
-    }
-
-    public void setOnRingtoneSelectedListener(RingtonePickerContract.View.OnRingtoneSelectedListener
-                                                      onRingtoneSelectedListener) {
-        mOnRingtoneSelectedListener = onRingtoneSelectedListener;
     }
 
     @Override
@@ -131,4 +134,8 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
         }
     }
 
+    @Override
+    public void show() {
+        super.show(mFragmentManager, "test_tag");
+    }
 }

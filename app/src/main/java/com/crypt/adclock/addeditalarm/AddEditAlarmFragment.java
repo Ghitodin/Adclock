@@ -17,6 +17,7 @@ import android.widget.NumberPicker;
 import android.widget.ToggleButton;
 
 import com.crypt.adclock.R;
+import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.di.ActivityScoped;
 import com.crypt.adclock.widgets.ClickableSwitchRow;
@@ -34,6 +35,9 @@ public class AddEditAlarmFragment extends DaggerFragment implements
 
     @Inject
     AddEditAlarmContract.Presenter mPresenter;
+
+    @Inject
+    RingtonePickerDialog mRingtonePickerDialog;
 
     MaterialNumberPicker mHoursNumberPicker;
     MaterialNumberPicker mMinutesNumberPicker;
@@ -137,7 +141,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clickable_ringtone_item:
-                mPresenter.pickRingtone();
+                showPickRingtoneDialog();
                 break;
             case R.id.clickable_label_item:
                 mPresenter.editLabel();
@@ -200,6 +204,11 @@ public class AddEditAlarmFragment extends DaggerFragment implements
 
         dialog.setCancelable(true);
         dialog.show();
+    }
+
+    @Override
+    public void showPickRingtoneDialog() {
+        mRingtonePickerDialog.show();
     }
 
     public interface OnFragmentInteractionListener {

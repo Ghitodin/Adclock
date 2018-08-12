@@ -9,16 +9,20 @@ public interface RingtonePickerContract {
 
     interface View extends BaseView<Presenter> {
 
-        interface OnRingtoneSelectedListener {
-            void onRingtoneSelected(Uri ringtoneUri);
-        }
-
-        void setOnRingtoneSelectedListener(OnRingtoneSelectedListener l);
+        void show();
 
     }
 
     interface Presenter extends BasePresenter<View> {
-        void show(Uri initialUri, String tag);
+
+        interface OnRingtoneSelectedListener {
+
+            void onRingtoneSelected(Uri ringtoneUri);
+
+        }
+
+        void selectRingtone(Uri uri);
+
     }
 
 }

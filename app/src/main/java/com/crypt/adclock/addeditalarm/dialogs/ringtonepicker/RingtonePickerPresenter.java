@@ -1,28 +1,18 @@
 package com.crypt.adclock.addeditalarm.dialogs.ringtonepicker;
 
 import android.net.Uri;
-import android.support.v4.app.FragmentManager;
 
 import javax.inject.Inject;
 
 public class RingtonePickerPresenter implements
         RingtonePickerContract.Presenter {
 
-    private RingtonePickerContract.View.OnRingtoneSelectedListener mListener;
     private RingtonePickerContract.View mView;
-    private FragmentManager mFragmentManager;
+    RingtonePickerContract.Presenter.OnRingtoneSelectedListener mListener;
 
     @Inject
-    public RingtonePickerPresenter(FragmentManager fragmentManager,
-                                   RingtonePickerContract.View.OnRingtoneSelectedListener l) {
-        mFragmentManager = fragmentManager;
-        mListener = l;
-    }
-
-    @Override
-    public void show(Uri initialUri, String tag) {
-        RingtonePickerDialog dialog = RingtonePickerDialog.newInstance(mListener, initialUri);
-        dialog.show(mFragmentManager, tag);
+    public RingtonePickerPresenter(RingtonePickerContract.Presenter.OnRingtoneSelectedListener listener) {
+        mListener = listener;
     }
 
     @Override
@@ -33,5 +23,10 @@ public class RingtonePickerPresenter implements
     @Override
     public void dropView() {
         mView = null;
+    }
+
+    @Override
+    public void selectRingtone(Uri uri) {
+        mListener.onRingtoneSelected(uri);
     }
 }

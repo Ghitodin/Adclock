@@ -1,8 +1,11 @@
 package com.crypt.adclock.addeditalarm;
 
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 
+import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerContract;
+import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPresenter;
 import com.crypt.adclock.di.ActivityScoped;
 import com.crypt.adclock.di.FragmentScoped;
 
@@ -32,5 +35,24 @@ public abstract class AddEditAlarmModule {
 
     @ActivityScoped
     @Binds
-    abstract AddEditAlarmContract.Presenter addEditAlarmPresenter(AddEditAlarmPresenter presenter);
+    abstract AddEditAlarmContract.Presenter provideAddEditAlarmPresenter(
+            AddEditAlarmPresenter presenter);
+
+    @Provides
+    @ActivityScoped
+    static RingtonePickerContract.Presenter.
+            OnRingtoneSelectedListener provideOnRingtoneSelectedListener(
+                    final AddEditAlarmPresenter presenter) {
+        return new RingtonePickerContract.Presenter.OnRingtoneSelectedListener() {
+            @Override
+            public void onRingtoneSelected(Uri ringtoneUri) {
+                presenter.setRingtone("kek");
+            }
+        };
+    }
+
+    @ActivityScoped
+    @Binds
+    abstract RingtonePickerContract.Presenter provideRingtonePickerPresenter(
+            RingtonePickerPresenter presenter);
 }

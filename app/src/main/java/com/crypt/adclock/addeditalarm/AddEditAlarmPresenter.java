@@ -6,12 +6,10 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelContract;
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelPresenter;
-import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerContract;
-import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPresenter;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.RepeatType;
 import com.crypt.adclock.data.source.AlarmsDataSource;
@@ -30,13 +28,10 @@ public class AddEditAlarmPresenter implements
     private AddEditAlarmContract.View mView;
     private Context mContext;
     private AlarmsDataSource mRepository;
-    @Inject
-    FragmentManager mFragmentManager;
 
     @Nullable
     private String mAlarmId;
 
-    private RingtonePickerPresenter mRingtonePickerPresenter;
     private EditLabelPresenter mEditLabelPresenter;
 
     @Inject
@@ -67,7 +62,11 @@ public class AddEditAlarmPresenter implements
 
     @Override
     public void setRingtone(String ringtone) {
-
+        mAlarm.setRingtone(ringtone);
+        Log.e("KEK", ringtone);
+        if (mView != null) {
+            mView.updateView(mAlarm);
+        }
     }
 
     @Override
@@ -102,25 +101,7 @@ public class AddEditAlarmPresenter implements
                 }
         );
 
-        //mEditLabelPresenter.show(mAlarm.getTitle(), "test_tag");
         mEditLabelPresenter.show("sds", "test_tag");
-    }
-
-    @Override
-    public void pickRingtone() {
-        mRingtonePickerPresenter = new RingtonePickerPresenter(
-                mFragmentManager,
-                new RingtonePickerContract.View.OnRingtoneSelectedListener() {
-                    @Override
-                    public void onRingtoneSelected(Uri ringtoneUri) {
-                        mAlarm.setRingtone(ringtoneUri.toString());
-                        mView.updateView(mAlarm);
-                    }
-                }
-        );
-
-        // TODO Implement util for tagging
-        mRingtonePickerPresenter.show(getSelectedRingtoneUri(), "test_tag");
     }
 
     private Uri getSelectedRingtoneUri() {
