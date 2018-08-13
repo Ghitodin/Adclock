@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelContract;
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelPresenter;
@@ -14,6 +13,10 @@ import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.RepeatType;
 import com.crypt.adclock.data.source.AlarmsDataSource;
 import com.crypt.adclock.data.source.AlarmsRepository;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.util.Calendar;
 
 import javax.inject.Inject;
 
@@ -32,12 +35,11 @@ public class AddEditAlarmPresenter implements
     @Nullable
     private String mAlarmId;
 
-    private EditLabelPresenter mEditLabelPresenter;
-
     @Inject
     AddEditAlarmPresenter(@NonNull AlarmsRepository repository, @NonNull Context context) {
         mRepository = repository;
         mContext = context;
+        createOrLoadAlarm();
     }
 
     @Override
@@ -61,18 +63,25 @@ public class AddEditAlarmPresenter implements
     }
 
     @Override
-    public void setRingtone(String ringtone) {
-        mAlarm.setRingtone(ringtone);
-        Log.e("KEK", ringtone);
+    public void setRingtone(String stringUri) {
+        mAlarm.setRingtone(stringUri);
+
+        // Parsing and displaying ringtone name
+        Uri uri = Uri.parse(stringUri);
+        String ringtoneName = RingtoneManager
+                .getRingtone(mContext, uri)
+                .getTitle(mContext);
+
         if (mView != null) {
-            mView.updateView(mAlarm);
+            mView.displayRingtoneName(ringtoneName);
         }
     }
 
     @Override
     public void setLabel(String label) {
+        mAlarm.setTitle(label);
         if (mView != null) {
-            mView.updateView(mAlarm);
+            mView.displayLabel(label);
         }
     }
 
@@ -90,18 +99,28 @@ public class AddEditAlarmPresenter implements
 
     @Override
     public void editLabel() {
-        mEditLabelPresenter = new EditLabelPresenter(
-                ((AppCompatActivity) mContext).getSupportFragmentManager(),
-                new EditLabelContract.View.OnLabelSetListener(){
-                    @Override
-                    public void onLabelSet(String label) {
-                        mAlarm.setTitle(label);
-                        mView.updateView(mAlarm);
-                    }
-                }
-        );
+        if (mView != null)
+            mView.showLabelInputDialog(mAlarm.getTitle());
+    }
 
-        mEditLabelPresenter.show("sds", "test_tag");
+    @Override
+    public void pickRingtone() {
+        if (mView != null)
+            mView.showPickRingtoneDialog();
+    }
+
+    @Override
+    public void takeView(AddEditAlarmContract.View view) {
+        mView = view;
+    }
+
+    @Override
+    public void dropView() {
+        mView = null;
+    }
+
+    private boolean isNewAlarm() {
+        return mAlarmId == null;
     }
 
     private Uri getSelectedRingtoneUri() {
@@ -119,27 +138,14 @@ public class AddEditAlarmPresenter implements
         return selectedRingtoneUri;
     }
 
-    private boolean isNewAlarm() {
-        return mAlarmId == null;
-    }
-
-    @Override
-    public void takeView(AddEditAlarmContract.View view) {
-        mView = view;
-    }
-
-    @Override
-    public void dropView() {
-        mView = null;
-    }
     private void createOrLoadAlarm() {
         if (isNewAlarm()) {
-            /* Initialize new alarm
-                    mAlarm = new Alarm("Kek", new Date(), RepeatType.OnlyOnce,
+
+            mAlarm = new Alarm("Kek", new Time(Calendar.getInstance().getTimeInMillis()), 0,
                     1, true,
                     RingtoneManager.getActualDefaultRingtoneUri
                             (mContext, RingtoneManager.TYPE_ALARM).toString());
-            */
+
         } else {
             // Get from repo by id
         }

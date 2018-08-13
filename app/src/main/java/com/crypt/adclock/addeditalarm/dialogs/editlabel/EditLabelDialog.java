@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.AppCompatEditText;
@@ -13,30 +14,35 @@ import android.widget.EditText;
 
 import com.crypt.adclock.R;
 
+import javax.inject.Inject;
+
 
 public class EditLabelDialog extends AppCompatDialogFragment implements
         EditLabelContract.View {
     private EditText mEditText;
-    private OnLabelSetListener mOnLabelSetListener;
+    private EditLabelContract.Presenter.OnLabelSetListener mOnLabelSetListener;
     private CharSequence mInitialText;
-    private EditLabelContract.Presenter mPresenter;
+    @Inject
+    EditLabelPresenter mPresenter;
+    @Inject
+    FragmentManager mFragmentManager;
 
-    public static EditLabelDialog newInstance(OnLabelSetListener l, CharSequence text) {
-        EditLabelDialog dialog = new EditLabelDialog();
-        dialog.mOnLabelSetListener = l;
-        dialog.mInitialText = text;
-        return dialog;
+    @Inject
+    public EditLabelDialog() {
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.takeView(this);
+        if (mPresenter != null)
+            mPresenter.takeView(this);
     }
 
     @Override
     public void onDestroy() {
-        mPresenter.dropView();
+        if (mPresenter != null)
+            mPresenter.dropView();
         super.onDestroy();
     }
 
@@ -82,17 +88,18 @@ public class EditLabelDialog extends AppCompatDialogFragment implements
     }
 
     private void onOkPressed() {
-        if (mOnLabelSetListener != null) {
+        if (mPresenter != null) {
             // If we passed the text back as an Editable (subtype of CharSequence
             // used in EditText), then there may be text formatting left in there,
             // which we don't want.
-            mOnLabelSetListener.onLabelSet(mEditText.getText().toString());
+            mPresenter.setLabel(mEditText.getText().toString());
         }
         dismiss();
     }
 
-    public void setOnLabelSetListener(OnLabelSetListener l) {
-        mOnLabelSetListener = l;
+    @Override
+    public void show(String initialText) {
+        super.show(mFragmentManager, "test_tag");
     }
 
     @Override

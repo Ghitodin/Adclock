@@ -21,8 +21,8 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
     private static final String KEY_RINGTONE_URI = "key_ringtone_uri";
 
     private RingtoneManager mRingtoneManager;
-    private Uri mRingtoneUri;
     private RingtoneLoop mRingtone;
+    private Uri mRingtoneUri;
     @Inject
     RingtonePickerPresenter mPresenter;
     @Inject
@@ -59,8 +59,6 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
     }
 
     private AlertDialog createFrom(AlertDialog.Builder builder) {
-        // TODO: We set the READ_EXTERNAL_STORAGE permission. Verify that this includes the user's
-        // custom ringtone files.
         Cursor cursor = mRingtoneManager.getCursor();
         int checkedItem = mRingtoneManager.getRingtonePosition(mRingtoneUri);
         String labelColumn = cursor.getColumnName(RingtoneManager.TITLE_COLUMN_INDEX);
@@ -69,7 +67,6 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // So we just call parent`s method here
                         dismiss();
                     }
                 })
@@ -116,6 +113,9 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
     }
 
     private void onOkPressed() {
+        //Stop playing selected ringtone
+        destroyLocalPlayer();
+
         if (mPresenter != null) {
             mPresenter.selectRingtone(mRingtoneUri);
         }

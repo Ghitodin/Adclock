@@ -7,17 +7,20 @@ public interface EditLabelContract {
 
     interface View extends BaseView<Presenter> {
 
-        interface OnLabelSetListener {
-            void onLabelSet(String str);
-
-        }
-
-        void setOnLabelSetListener(OnLabelSetListener l);
+        void show(String initialText);
 
     }
 
     interface Presenter extends BasePresenter<View> {
-        void show(CharSequence initialText, String tag);
+
+        interface OnLabelSetListener {
+
+            void onLabelSet(String str);
+
+        }
+
+        void setLabel(String text);
+
     }
 
 }

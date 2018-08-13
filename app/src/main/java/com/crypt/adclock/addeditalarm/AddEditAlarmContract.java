@@ -13,7 +13,9 @@ public interface AddEditAlarmContract {
 
     interface View extends BaseView<Presenter> {
 
-        void updateView(Alarm alarm);
+        void displayRingtoneName(String ringtoneName);
+
+        void displayLabel(String description);
 
         void showRepeatSettingsDialog();
 
@@ -42,5 +44,7 @@ public interface AddEditAlarmContract {
         void editRepeatMode();
 
         void editLabel();
+
+        void pickRingtone();
     }
 }

@@ -1,6 +1,5 @@
 package com.crypt.adclock.addeditalarm;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -11,14 +10,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.ToggleButton;
 
 import com.crypt.adclock.R;
+import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelDialog;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
-import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.di.ActivityScoped;
 import com.crypt.adclock.widgets.ClickableSwitchRow;
 import com.crypt.adclock.widgets.ClickableTextViewRow;
@@ -38,6 +35,9 @@ public class AddEditAlarmFragment extends DaggerFragment implements
 
     @Inject
     RingtonePickerDialog mRingtonePickerDialog;
+
+    @Inject
+    EditLabelDialog mEditLabelDialog;
 
     MaterialNumberPicker mHoursNumberPicker;
     MaterialNumberPicker mMinutesNumberPicker;
@@ -128,7 +128,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     @Override
     public void onResume() {
         super.onResume();
-        this.mPresenter.takeView(this);
+        mPresenter.takeView(this);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clickable_ringtone_item:
-                showPickRingtoneDialog();
+                mPresenter.pickRingtone();
                 break;
             case R.id.clickable_label_item:
                 mPresenter.editLabel();
@@ -150,17 +150,14 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     }
 
     @Override
-    public void updateView(Alarm alarm) {
-        // Parsing and displaying ringtone name
-        Uri ringtone = Uri.parse(alarm.getRingtone());
-        String ringtoneName = RingtoneManager
-                .getRingtone(getContext(), ringtone)
-                .getTitle(getContext());
-
+    public void displayRingtoneName(String ringtoneName) {
         mRingtoneSettingsRow.setText(ringtoneName);
+    }
 
+    @Override
+    public void displayLabel(String label) {
         // Displaying label name
-        mLabelSettingsRow.setText(alarm.getTitle());
+        mLabelSettingsRow.setText(label);
     }
 
     @Override
@@ -181,29 +178,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
 
     @Override
     public void showLabelInputDialog(String currentLabel) {
-        final Dialog dialog = new Dialog(getContext());
-        dialog.setContentView(R.layout.label_dialog_layout);
-
-        final EditText labelEdit = dialog.findViewById(R.id.label);
-        final Button cancelButton = dialog.findViewById(R.id.cancel);
-        final Button okButton = dialog.findViewById(R.id.ok);
-
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPresenter.setLabel(String.valueOf(labelEdit.getText()));
-            }
-        });
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.setCancelable(true);
-        dialog.show();
+        mEditLabelDialog.show(currentLabel);
     }
 
     @Override

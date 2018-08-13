@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 
+import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelContract;
+import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelPresenter;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerContract;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPresenter;
 import com.crypt.adclock.di.ActivityScoped;
@@ -46,7 +48,7 @@ public abstract class AddEditAlarmModule {
         return new RingtonePickerContract.Presenter.OnRingtoneSelectedListener() {
             @Override
             public void onRingtoneSelected(Uri ringtoneUri) {
-                presenter.setRingtone("kek");
+                presenter.setRingtone(ringtoneUri.toString());
             }
         };
     }
@@ -55,4 +57,22 @@ public abstract class AddEditAlarmModule {
     @Binds
     abstract RingtonePickerContract.Presenter provideRingtonePickerPresenter(
             RingtonePickerPresenter presenter);
+
+    @Provides
+    @ActivityScoped
+    static EditLabelContract.Presenter.
+            OnLabelSetListener provideOnLabelSelectedListener(
+            final AddEditAlarmPresenter presenter) {
+        return new EditLabelContract.Presenter.OnLabelSetListener() {
+            @Override
+            public void onLabelSet(String label) {
+                presenter.setLabel(label);
+            }
+        };
+    }
+
+    @ActivityScoped
+    @Binds
+    abstract EditLabelContract.Presenter provideEditLabelPresenter(
+            EditLabelPresenter presenter);
 }
