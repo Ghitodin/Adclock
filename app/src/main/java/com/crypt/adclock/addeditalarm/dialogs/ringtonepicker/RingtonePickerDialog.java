@@ -12,10 +12,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 
 import com.crypt.adclock.R;
+import com.crypt.adclock.di.ActivityScoped;
 import com.crypt.adclock.util.RingtoneLoop;
 
 import javax.inject.Inject;
 
+@ActivityScoped
 public class RingtonePickerDialog extends AppCompatDialogFragment implements
         RingtonePickerContract.View {
     private static final String KEY_RINGTONE_URI = "key_ringtone_uri";
@@ -27,15 +29,6 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
     RingtonePickerPresenter mPresenter;
     @Inject
     FragmentManager mFragmentManager;
-
-    /**
-     * @param ringtoneUri the URI of the ringtone to show as initially selected
-     */
-    public static RingtonePickerDialog newInstance(Uri ringtoneUri) {
-        RingtonePickerDialog dialog = new RingtonePickerDialog();
-        dialog.mRingtoneUri = ringtoneUri;
-        return dialog;
-    }
 
     @Inject
     public RingtonePickerDialog() {

@@ -44,7 +44,7 @@ public abstract class AddEditAlarmModule {
     @ActivityScoped
     static RingtonePickerContract.Presenter.
             OnRingtoneSelectedListener provideOnRingtoneSelectedListener(
-                    final AddEditAlarmPresenter presenter) {
+            final AddEditAlarmContract.Presenter presenter) {
         return new RingtonePickerContract.Presenter.OnRingtoneSelectedListener() {
             @Override
             public void onRingtoneSelected(Uri ringtoneUri) {
@@ -62,7 +62,7 @@ public abstract class AddEditAlarmModule {
     @ActivityScoped
     static EditLabelContract.Presenter.
             OnLabelSetListener provideOnLabelSelectedListener(
-            final AddEditAlarmPresenter presenter) {
+            final AddEditAlarmContract.Presenter presenter) {
         return new EditLabelContract.Presenter.OnLabelSetListener() {
             @Override
             public void onLabelSet(String label) {

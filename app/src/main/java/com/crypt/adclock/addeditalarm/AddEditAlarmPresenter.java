@@ -5,16 +5,12 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
-import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelContract;
-import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelPresenter;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.RepeatType;
 import com.crypt.adclock.data.source.AlarmsDataSource;
 import com.crypt.adclock.data.source.AlarmsRepository;
 
-import java.sql.Date;
 import java.sql.Time;
 import java.util.Calendar;
 
@@ -24,13 +20,13 @@ import javax.inject.Inject;
  * Created by Ghito on 08-Mar-18.
  */
 
-public class AddEditAlarmPresenter implements
+final public class AddEditAlarmPresenter implements
         AddEditAlarmContract.Presenter {
     private Alarm mAlarm;
     @Nullable
     private AddEditAlarmContract.View mView;
     private Context mContext;
-    private AlarmsDataSource mRepository;
+    private final AlarmsDataSource mRepository;
 
     @Nullable
     private String mAlarmId;
