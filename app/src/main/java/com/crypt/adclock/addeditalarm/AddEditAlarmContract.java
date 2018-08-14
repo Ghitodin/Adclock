@@ -2,8 +2,8 @@ package com.crypt.adclock.addeditalarm;
 
 import com.crypt.adclock.BasePresenter;
 import com.crypt.adclock.BaseView;
-import com.crypt.adclock.data.Alarm;
-import com.crypt.adclock.data.RepeatType;
+
+import java.util.ArrayList;
 
 /**
  * Created by Ghito on 08-Mar-18.
@@ -33,7 +33,7 @@ public interface AddEditAlarmContract {
 
         void setMinutes(int minutes);
 
-        void setRepeatType(RepeatType repeatType);
+        void setRepeatDays(ArrayList<Boolean> repeatType);
 
         void setRingtone(String ringtone);
 

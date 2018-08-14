@@ -8,9 +8,11 @@ import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.crypt.adclock.util.DateConverter;
+import com.crypt.adclock.util.RepeatDaysConverter;
+import com.crypt.adclock.util.TimeConverter;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -18,28 +20,25 @@ import java.util.UUID;
  */
 
 @Entity(tableName = "alarms")
-@TypeConverters(DateConverter.class)
+@TypeConverters({TimeConverter.class, RepeatDaysConverter.class})
 public class Alarm {
 
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "entryid")
-    private final String id;
+    private String id;
 
     @Nullable
     @ColumnInfo(name = "title")
     private String title;
 
     @NonNull
-    @ColumnInfo(name = "date")
-    private final Time date;
+    @ColumnInfo(name = "time")
+    private Time time;
 
     @NonNull
-    @ColumnInfo(name = "repeat_type")
-    private final int repeatType;
-
-    @ColumnInfo(name = "custom_repeat_days")
-    private int customRepeatDays;
+    @ColumnInfo(name = "repeat_days")
+    private ArrayList<Boolean> repeatDays;
 
     @ColumnInfo(name = "is_active")
     private boolean isActive;
@@ -49,14 +48,13 @@ public class Alarm {
     private String ringtone;
 
 
-    public Alarm(@Nullable String id, @Nullable String title, @NonNull Time date,
-                 @NonNull int repeatType, int customRepeatDays,
-                 boolean isActive, String ringtone) {
+    public Alarm(@NonNull String id, @Nullable String title, @NonNull Time time,
+                 @NonNull ArrayList<Boolean> repeatDays, boolean isActive,
+                 @NonNull String ringtone) {
         this.id = id;
         this.title = title;
-        this.date = date;
-        this.repeatType = repeatType;
-        this.customRepeatDays = customRepeatDays;
+        this.time = time;
+        this.repeatDays = repeatDays;
         this.isActive = isActive;
         this.ringtone = ringtone;
     }
@@ -65,10 +63,10 @@ public class Alarm {
      * Use this constructor to create a new active Alarm.
      */
     @Ignore
-    public Alarm(@Nullable String title, @NonNull Time date,
-                 @NonNull int repeatType, int customRepeatDays,
-                 boolean isActive, String ringtone) {
-        this(UUID.randomUUID().toString(), title, date, repeatType, customRepeatDays,
+    public Alarm(@Nullable String title, @NonNull Time time,
+                 @NonNull ArrayList<Boolean> repeatDays, boolean isActive,
+                 @NonNull String ringtone) {
+        this(UUID.randomUUID().toString(), title, time, repeatDays,
                 isActive, ringtone);
     }
 
@@ -83,17 +81,13 @@ public class Alarm {
     }
 
     @NonNull
-    public Time getDate() {
-        return date;
+    public Time getTime() {
+        return time;
     }
 
     @NonNull
-    public int getRepeatType() {
-        return repeatType;
-    }
-
-    public int getCustomRepeatDays() {
-        return customRepeatDays;
+    public ArrayList<Boolean> getRepeatDays() {
+        return repeatDays;
     }
 
     public boolean isActive() {
@@ -108,19 +102,17 @@ public class Alarm {
     public void setTitle(@Nullable String title) {
         this.title = title;
     }
-    /*
-    public void setDate(@NonNull Time date) {
-        this.date = date;
-    }
-    */
-    /*
-    public void setRepeatType(@NonNull int repeatType) {
-        this.repeatType = repeatType;
-    }
-    */
 
-    public void setCustomRepeatDays(int customRepeatDays) {
-        this.customRepeatDays = customRepeatDays;
+    public void setTime(@NonNull Time time) {
+        this.time = time;
+    }
+
+    public void setRepeatDays(@NonNull ArrayList<Boolean> repeatDays) {
+        this.repeatDays = repeatDays;
+    }
+
+    public void setId(@NonNull String id) {
+        this.id = id;
     }
 
     public void setActive(boolean active) {

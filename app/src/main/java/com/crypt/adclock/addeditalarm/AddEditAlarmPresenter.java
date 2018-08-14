@@ -7,12 +7,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.crypt.adclock.data.Alarm;
-import com.crypt.adclock.data.RepeatType;
 import com.crypt.adclock.data.source.AlarmsDataSource;
 import com.crypt.adclock.data.source.AlarmsRepository;
 
 import java.sql.Time;
-import java.util.Calendar;
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -54,7 +53,7 @@ final public class AddEditAlarmPresenter implements
     }
 
     @Override
-    public void setRepeatType(RepeatType repeatType) {
+    public void setRepeatDays(ArrayList<Boolean> repeatDays) {
 
     }
 
@@ -137,10 +136,17 @@ final public class AddEditAlarmPresenter implements
     private void createOrLoadAlarm() {
         if (isNewAlarm()) {
 
-            mAlarm = new Alarm("Kek", new Time(Calendar.getInstance().getTimeInMillis()), 0,
-                    1, true,
+            ArrayList<Boolean> repeatDays = new ArrayList<>();
+            for (int i = 0; i < 7; ++i) {
+                repeatDays.add(true);
+            }
+            mAlarm = new Alarm("Kek",
+                    new Time(9, 10, 0),
+                    repeatDays,
+                    true,
                     RingtoneManager.getActualDefaultRingtoneUri
-                            (mContext, RingtoneManager.TYPE_ALARM).toString());
+                            (mContext, RingtoneManager.TYPE_ALARM).toString()
+            );
 
         } else {
             // Get from repo by id
