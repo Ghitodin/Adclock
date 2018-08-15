@@ -60,6 +60,7 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        destroyLocalPlayer();
                         dismiss();
                     }
                 })
