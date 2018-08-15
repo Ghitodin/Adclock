@@ -1,6 +1,7 @@
 package com.crypt.adclock.addeditalarm;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.NumberPicker;
 import android.widget.ToggleButton;
 
@@ -17,9 +19,13 @@ import com.crypt.adclock.R;
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelDialog;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
 import com.crypt.adclock.di.ActivityScoped;
+import com.crypt.adclock.util.ColorFromThemeUtil;
+import com.crypt.adclock.util.WeekDays;
 import com.crypt.adclock.widgets.ClickableSwitchRow;
 import com.crypt.adclock.widgets.ClickableTextViewRow;
 import com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -28,7 +34,8 @@ import dagger.android.support.DaggerFragment;
 @ActivityScoped
 public class AddEditAlarmFragment extends DaggerFragment implements
         AddEditAlarmContract.View,
-        View.OnClickListener {
+        View.OnClickListener,
+        CompoundButton.OnCheckedChangeListener {
 
     @Inject
     AddEditAlarmContract.Presenter mPresenter;
@@ -47,13 +54,12 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     ClickableSwitchRow mVibroSettingsRow;
     ClickableTextViewRow mLabelSettingsRow;
 
-    ToggleButton mDay1;
+    ColorStateList mDayToggleColors;
+    ToggleButton[] mDays;
 
     public static final String ARGUMENT_EDIT_ALARM_ID = "EDIT_ALARM_ID";
     private final int AM_INT = 0;
     private final int PM_INT = 1;
-
-    private final int RINGTONE_REQUEST_CODE = 5;
 
     private OnFragmentInteractionListener mListener;
 
@@ -88,10 +94,9 @@ public class AddEditAlarmFragment extends DaggerFragment implements
         mVibroSettingsRow = root.findViewById(R.id.clickable_switch_vibro_item);
         mLabelSettingsRow = root.findViewById(R.id.clickable_label_item);
 
-        mDay1 = root.findViewById(R.id.day1);
-
-        mDay1.setTextOn("Kok");
-        mDay1.setTextOff("Kek");
+        mDays = new ToggleButton[7];
+        initColorForToggleStates();
+        bindDaysButtons(root);
 
         NumberPicker.Formatter timeFormatter = new NumberPicker.Formatter() {
             @NonNull
@@ -119,8 +124,6 @@ public class AddEditAlarmFragment extends DaggerFragment implements
 
         mRingtoneSettingsRow.setOnClickListener(this);
         mLabelSettingsRow.setOnClickListener(this);
-
-        mDay1.setOnClickListener(this);
 
         return root;
     }
@@ -150,6 +153,38 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     }
 
     @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        int day;
+        switch (compoundButton.getId()) {
+            case R.id.day1:
+                day = 0;
+                break;
+            case R.id.day2:
+                day = 1;
+                break;
+            case R.id.day3:
+                day = 2;
+                break;
+            case R.id.day4:
+                day = 3;
+                break;
+            case R.id.day5:
+                day = 4;
+                break;
+            case R.id.day6:
+                day = 5;
+                break;
+            case R.id.day7:
+                day = 6;
+                break;
+            default:
+                return;
+        }
+
+        mPresenter.onWeekDayClicked(day, isChecked);
+    }
+
+    @Override
     public void displayRingtoneName(String ringtoneName) {
         mRingtoneSettingsRow.setText(ringtoneName);
     }
@@ -163,11 +198,6 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     @Override
     public void setPresenter(AddEditAlarmContract.Presenter presenter) {
         mPresenter = presenter;
-    }
-
-    @Override
-    public void showRepeatSettingsDialog() {
-
     }
 
     @Override
@@ -186,9 +216,57 @@ public class AddEditAlarmFragment extends DaggerFragment implements
         mRingtonePickerDialog.show();
     }
 
+    @Override
+    public void displayRepeatingOn(ArrayList<Boolean> repeatOn) {
+        for (int i = 0; i < repeatOn.size(); i++) {
+            //We disable listener so the check event doesn`t fire
+            mDays[i].setOnCheckedChangeListener(null);
+            mDays[i].setChecked(repeatOn.get(i));
+            mDays[i].setOnCheckedChangeListener(this);
+        }
+    }
+
+    // TODO Think about it
+    private void initColorForToggleStates() {
+        //We need to define color for "on"-state
+        int[][] states = {
+                /*item 1*/{/*states*/android.R.attr.state_checked},
+                /*item 2*/{/*states*/}
+        };
+
+        int[] dayToggleColors = {
+                /*item 1*/ColorFromThemeUtil.getTextColorFromThemeAttr
+                (getContext(), R.attr.colorAccent),
+                /*item 2*/ColorFromThemeUtil.getTextColorFromThemeAttr
+                (getContext(), android.R.attr.textColorHint)
+        };
+
+        mDayToggleColors = new ColorStateList(states, dayToggleColors);
+    }
+
+    private void bindDaysButtons(View root) {
+        mDays[0] = root.findViewById(R.id.day1);
+        mDays[1] = root.findViewById(R.id.day2);
+        mDays[2] = root.findViewById(R.id.day3);
+        mDays[3] = root.findViewById(R.id.day4);
+        mDays[4] = root.findViewById(R.id.day5);
+        mDays[5] = root.findViewById(R.id.day6);
+        mDays[6] = root.findViewById(R.id.day7);
+
+        for (int i = 0; i < mDays.length; i++) {
+            mDays[i].setTextColor(mDayToggleColors);
+            mDays[i].setOnCheckedChangeListener(this);
+
+            String label = WeekDays.getLabel(i);
+            mDays[i].setTextOn(label);
+            mDays[i].setTextOff(label);
+        }
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }
 

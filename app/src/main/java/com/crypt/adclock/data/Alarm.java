@@ -123,4 +123,10 @@ public class Alarm {
         this.ringtone = ringtone;
     }
 
+    // Returns true if alarm should ring on this day of week.
+    // Day is passed in zero-based format
+    public boolean isRepeatingOn(int day) {
+        return repeatDays.get(day);
+    }
+
 }

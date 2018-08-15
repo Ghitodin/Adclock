@@ -17,7 +17,7 @@ public interface AddEditAlarmContract {
 
         void displayLabel(String description);
 
-        void showRepeatSettingsDialog();
+        void displayRepeatingOn(ArrayList<Boolean> repeatDays);
 
         void showLabelInputDialog(String currentLabel);
 
@@ -33,7 +33,7 @@ public interface AddEditAlarmContract {
 
         void setMinutes(int minutes);
 
-        void setRepeatDays(ArrayList<Boolean> repeatType);
+        void onWeekDayClicked(int day, boolean isChecked);
 
         void setRingtone(String ringtone);
 

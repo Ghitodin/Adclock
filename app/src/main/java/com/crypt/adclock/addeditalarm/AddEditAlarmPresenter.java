@@ -53,22 +53,11 @@ final public class AddEditAlarmPresenter implements
     }
 
     @Override
-    public void setRepeatDays(ArrayList<Boolean> repeatDays) {
-
-    }
-
-    @Override
     public void setRingtone(String stringUri) {
         mAlarm.setRingtone(stringUri);
 
-        // Parsing and displaying ringtone name
-        Uri uri = Uri.parse(stringUri);
-        String ringtoneName = RingtoneManager
-                .getRingtone(mContext, uri)
-                .getTitle(mContext);
-
         if (mView != null) {
-            mView.displayRingtoneName(ringtoneName);
+            mView.displayRingtoneName(getRingtoneNameFromUri(stringUri));
         }
     }
 
@@ -87,9 +76,6 @@ final public class AddEditAlarmPresenter implements
 
     @Override
     public void editRepeatMode() {
-        if (mView != null) {
-            mView.showRepeatSettingsDialog();
-        }
     }
 
     @Override
@@ -105,8 +91,23 @@ final public class AddEditAlarmPresenter implements
     }
 
     @Override
+    public void onWeekDayClicked(int day, boolean isRepeating) {
+        if (mAlarm == null)
+            return;
+
+        if (day > mAlarm.getRepeatDays().size())
+            return;
+
+        mAlarm.getRepeatDays().add(day, isRepeating);
+    }
+
+    @Override
     public void takeView(AddEditAlarmContract.View view) {
         mView = view;
+        if (mAlarm == null || mView == null)
+            return;
+
+        updateView();
     }
 
     @Override
@@ -114,8 +115,23 @@ final public class AddEditAlarmPresenter implements
         mView = null;
     }
 
+    private String getRingtoneNameFromUri(String stringUri) {
+        // Parsing and displaying ringtone name
+        Uri uri = Uri.parse(stringUri);
+        return RingtoneManager.getRingtone(mContext, uri)
+                .getTitle(mContext);
+    }
+
     private boolean isNewAlarm() {
         return mAlarmId == null;
+    }
+
+    private void updateView() {
+        if (mView != null) {
+            mView.displayRepeatingOn(mAlarm.getRepeatDays());
+            mView.displayRingtoneName(getRingtoneNameFromUri(mAlarm.getRingtone()));
+            mView.displayLabel(mAlarm.getTitle());
+        }
     }
 
     private Uri getSelectedRingtoneUri() {
@@ -140,6 +156,7 @@ final public class AddEditAlarmPresenter implements
             for (int i = 0; i < 7; ++i) {
                 repeatDays.add(true);
             }
+
             mAlarm = new Alarm("Kek",
                     new Time(9, 10, 0),
                     repeatDays,
