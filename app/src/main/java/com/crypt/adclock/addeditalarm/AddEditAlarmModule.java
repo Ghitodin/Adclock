@@ -22,7 +22,13 @@ public abstract class AddEditAlarmModule {
     @ActivityScoped
     @Nullable
     static String provideAlarmId(AddEditAlarmActivity activity) {
-        return activity.getIntent().getStringExtra(AddEditAlarmFragment.ARGUMENT_EDIT_ALARM_ID);
+        return activity.getIntent().getStringExtra(AddEditAlarmFragment.EXTRA_EDIT_ALARM_ID);
+    }
+
+    @Provides
+    @ActivityScoped
+    static boolean provideIsNeedToLoadData(AddEditAlarmActivity activity) {
+        return activity.isNeedToLoadData();
     }
 
     @Provides
@@ -47,8 +53,8 @@ public abstract class AddEditAlarmModule {
             final AddEditAlarmContract.Presenter presenter) {
         return new RingtonePickerContract.Presenter.OnRingtoneSelectedListener() {
             @Override
-            public void onRingtoneSelected(Uri ringtoneUri) {
-                presenter.setRingtone(ringtoneUri.toString());
+            public void onRingtoneSelected(Uri uri) {
+                presenter.setRingtone(uri);
             }
         };
     }

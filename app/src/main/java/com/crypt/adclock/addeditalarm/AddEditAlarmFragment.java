@@ -1,5 +1,6 @@
 package com.crypt.adclock.addeditalarm;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.media.RingtoneManager;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +59,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     ColorStateList mDayToggleColors;
     ToggleButton[] mDays;
 
-    public static final String ARGUMENT_EDIT_ALARM_ID = "EDIT_ALARM_ID";
+    public static final String EXTRA_EDIT_ALARM_ID = "EDIT_ALARM_ID";
     private final int AM_INT = 0;
     private final int PM_INT = 1;
 
@@ -77,7 +79,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.saveAlarm();
+                mPresenter.saveAlarm(mLabelSettingsRow.getText(), null, null);
             }
         });
     }
@@ -135,9 +137,9 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
         mPresenter.dropView();
+        super.onPause();
     }
 
     @Override
@@ -147,7 +149,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
                 mPresenter.pickRingtone();
                 break;
             case R.id.clickable_label_item:
-                mPresenter.editLabel();
+                mPresenter.editLabel(mLabelSettingsRow.getText());
                 break;
         }
     }
@@ -180,8 +182,6 @@ public class AddEditAlarmFragment extends DaggerFragment implements
             default:
                 return;
         }
-
-        mPresenter.onWeekDayClicked(day, isChecked);
     }
 
     @Override
@@ -212,8 +212,22 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     }
 
     @Override
-    public void showPickRingtoneDialog() {
-        mRingtonePickerDialog.show();
+    public void showPickRingtoneDialog(Uri ringtoneUri) {
+        mRingtonePickerDialog.show(ringtoneUri);
+    }
+
+    @Override
+    public void finishAddEdit() {
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            activity.setResult(Activity.RESULT_OK);
+            activity.finish();
+        }
+    }
+
+    @Override
+    public boolean isActive() {
+        return isAdded();
     }
 
     @Override

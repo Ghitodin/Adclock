@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +27,7 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
     private RingtoneLoop mRingtone;
     private Uri mRingtoneUri;
     @Inject
-    RingtonePickerPresenter mPresenter;
+    RingtonePickerContract.Presenter mPresenter;
     @Inject
     FragmentManager mFragmentManager;
 
@@ -45,13 +46,14 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
         mRingtoneManager.setType(RingtoneManager.TYPE_ALARM);
     }
 
+    @NonNull
     @Override
     public final Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         return createFrom(builder);
     }
 
-    private AlertDialog createFrom(AlertDialog.Builder builder) {
+    private AlertDialog createFrom(@NonNull AlertDialog.Builder builder) {
         Cursor cursor = mRingtoneManager.getCursor();
         int checkedItem = mRingtoneManager.getRingtonePosition(mRingtoneUri);
         String labelColumn = cursor.getColumnName(RingtoneManager.TITLE_COLUMN_INDEX);
@@ -100,9 +102,16 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
     }
 
     @Override
+    public void onPause() {
+        destroyLocalPlayer();
+        super.onPause();
+    }
+
+    @Override
     public void onDestroy() {
         if (mPresenter != null)
             mPresenter.dropView();
+
         super.onDestroy();
     }
 
@@ -118,7 +127,6 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
 
     @Override
     public void setPresenter(RingtonePickerContract.Presenter presenter) {
-
     }
 
     private void destroyLocalPlayer() {
@@ -129,7 +137,8 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
     }
 
     @Override
-    public void show() {
+    public void show(Uri ringtoneUri) {
+        mRingtoneUri = ringtoneUri;
         super.show(mFragmentManager, "test_tag");
     }
 }

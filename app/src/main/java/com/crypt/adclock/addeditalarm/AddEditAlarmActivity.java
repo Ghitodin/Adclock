@@ -14,11 +14,15 @@ import dagger.android.support.DaggerAppCompatActivity;
 
 public class AddEditAlarmActivity extends DaggerAppCompatActivity {
 
+    public static final String KEY_NEED_TO_LOAD_DATA = "KEY_NEED_TO_LOAD_DATA";
     public static final int REQUEST_ADD_TASK = 1;
-    private ActionBar actionBar;
+
+    private boolean mIsNeedToLoadData = true; // Load data on 1-st run
+
+    private ActionBar mActionBar;
 
     @Inject
-    AddEditAlarmContract.Presenter mAddEditPresenter;
+    AddEditAlarmContract.Presenter mPresenter;
 
     @Inject
     AddEditAlarmFragment mFragment;
@@ -35,9 +39,9 @@ public class AddEditAlarmActivity extends DaggerAppCompatActivity {
         // Set up the toolbar.
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
+        mActionBar = getSupportActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setDisplayShowHomeEnabled(true);
 
         AddEditAlarmFragment addEditAlarmFragment = (AddEditAlarmFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.contentFrame);
@@ -50,13 +54,31 @@ public class AddEditAlarmActivity extends DaggerAppCompatActivity {
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
                     addEditAlarmFragment, R.id.contentFrame);
         }
+
+        restoreState(savedInstanceState);
     }
 
     private void setToolbarTitle(@Nullable String taskId) {
         if (taskId == null) {
-            actionBar.setTitle(R.string.add_alarm);
+            mActionBar.setTitle(R.string.add_alarm);
         } else {
-            actionBar.setTitle(R.string.edit_alarm);
+            mActionBar.setTitle(R.string.edit_alarm);
         }
+    }
+
+    private void restoreState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mIsNeedToLoadData = savedInstanceState.getBoolean(KEY_NEED_TO_LOAD_DATA);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(KEY_NEED_TO_LOAD_DATA, mPresenter.isNeedToLoadData());
+        super.onSaveInstanceState(outState);
+    }
+
+    public boolean isNeedToLoadData() {
+        return mIsNeedToLoadData;
     }
 }

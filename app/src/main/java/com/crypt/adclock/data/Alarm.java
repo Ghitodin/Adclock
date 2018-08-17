@@ -5,11 +5,13 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.crypt.adclock.util.RepeatDaysConverter;
-import com.crypt.adclock.util.TimeConverter;
+import com.crypt.adclock.util.converters.RepeatDaysConverter;
+import com.crypt.adclock.util.converters.TimeConverter;
+import com.crypt.adclock.util.converters.UriConverter;
 
 import java.sql.Time;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import java.util.UUID;
  */
 
 @Entity(tableName = "alarms")
-@TypeConverters({TimeConverter.class, RepeatDaysConverter.class})
+@TypeConverters({TimeConverter.class, RepeatDaysConverter.class, UriConverter.class})
 public class Alarm {
 
     @PrimaryKey
@@ -44,19 +46,19 @@ public class Alarm {
     private boolean isActive;
 
     @NonNull
-    @ColumnInfo(name = "ringtone")
-    private String ringtone;
+    @ColumnInfo(name = "ringtoneUri")
+    private Uri ringtoneUri;
 
 
     public Alarm(@NonNull String id, @Nullable String title, @NonNull Time time,
                  @NonNull ArrayList<Boolean> repeatDays, boolean isActive,
-                 @NonNull String ringtone) {
+                 @NonNull Uri ringtoneUri) {
         this.id = id;
         this.title = title;
         this.time = time;
         this.repeatDays = repeatDays;
         this.isActive = isActive;
-        this.ringtone = ringtone;
+        this.ringtoneUri = ringtoneUri;
     }
 
     /**
@@ -65,9 +67,9 @@ public class Alarm {
     @Ignore
     public Alarm(@Nullable String title, @NonNull Time time,
                  @NonNull ArrayList<Boolean> repeatDays, boolean isActive,
-                 @NonNull String ringtone) {
+                 @NonNull Uri ringtoneUri) {
         this(UUID.randomUUID().toString(), title, time, repeatDays,
-                isActive, ringtone);
+                isActive, ringtoneUri);
     }
 
     @NonNull
@@ -95,8 +97,8 @@ public class Alarm {
     }
 
     @NonNull
-    public String getRingtone() {
-        return ringtone;
+    public Uri getRingtoneUri() {
+        return ringtoneUri;
     }
 
     public void setTitle(@Nullable String title) {
@@ -119,8 +121,8 @@ public class Alarm {
         isActive = active;
     }
 
-    public void setRingtone(@NonNull String ringtone) {
-        this.ringtone = ringtone;
+    public void setRingtoneUri(@NonNull Uri ringtoneUri) {
+        this.ringtoneUri = ringtoneUri;
     }
 
     // Returns true if alarm should ring on this day of week.

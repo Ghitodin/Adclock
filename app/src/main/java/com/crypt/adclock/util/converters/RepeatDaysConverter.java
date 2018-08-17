@@ -1,4 +1,4 @@
-package com.crypt.adclock.util;
+package com.crypt.adclock.util.converters;
 
 import android.arch.persistence.room.TypeConverter;
 

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
@@ -20,7 +21,6 @@ import javax.inject.Inject;
 public class EditLabelDialog extends AppCompatDialogFragment implements
         EditLabelContract.View {
     private EditText mEditText;
-    private EditLabelContract.Presenter.OnLabelSetListener mOnLabelSetListener;
     private CharSequence mInitialText;
     @Inject
     EditLabelPresenter mPresenter;
@@ -46,6 +46,7 @@ public class EditLabelDialog extends AppCompatDialogFragment implements
         super.onDestroy();
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstance) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -99,6 +100,7 @@ public class EditLabelDialog extends AppCompatDialogFragment implements
 
     @Override
     public void show(String initialText) {
+        mInitialText = initialText;
         super.show(mFragmentManager, "test_tag");
     }
 

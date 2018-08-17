@@ -9,7 +9,7 @@ public interface RingtonePickerContract {
 
     interface View extends BaseView<Presenter> {
 
-        void show();
+        void show(Uri ringtoneUri);
 
     }
 
