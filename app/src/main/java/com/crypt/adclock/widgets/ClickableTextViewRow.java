@@ -2,6 +2,9 @@ package com.crypt.adclock.widgets;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.util.AttributeSet;
@@ -14,6 +17,8 @@ import android.widget.TextView;
 
 import com.crypt.adclock.R;
 
+import org.jetbrains.annotations.Contract;
+
 public class ClickableTextViewRow extends LinearLayout implements View.OnClickListener {
     private TextView mAdditionalText;
     private Button mBtnTitle;
@@ -22,9 +27,6 @@ public class ClickableTextViewRow extends LinearLayout implements View.OnClickLi
     private String mText;
     private String mTitle;
 
-    public ClickableTextViewRow(Context context) {
-        super(context);
-    }
 
     public ClickableTextViewRow(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -32,12 +34,25 @@ public class ClickableTextViewRow extends LinearLayout implements View.OnClickLi
         initUi();
     }
 
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        final SavedState savedState = new SavedState(super.onSaveInstanceState());
+        savedState.mState = mText;
+        return savedState;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        mText = ((SavedState)state).mState;
+        setText(mText);
+        super.onRestoreInstanceState(((SavedState) state).getSuperState());
+    }
+
     private void initAttrs(AttributeSet attrs) {
         TypedArray mTypedArray = getContext().obtainStyledAttributes(attrs,
                 R.styleable.ClickableTextViewRow, 0, 0);
 
         try {
-            mText = mTypedArray.getString(R.styleable.ClickableTextViewRow_additional_text);
             mTitle = mTypedArray.getString(R.styleable.ClickableTextViewRow_txt_title);
         } finally {
             mTypedArray.recycle();
@@ -62,7 +77,7 @@ public class ClickableTextViewRow extends LinearLayout implements View.OnClickLi
         setTitle(getResources().getString(res));
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@NonNull String title) {
         mTitle = title;
         mBtnTitle.setText(mTitle);
     }
@@ -71,11 +86,7 @@ public class ClickableTextViewRow extends LinearLayout implements View.OnClickLi
         return mTitle;
     }
 
-    public void setText(@StringRes int res) {
-        setTitle(getResources().getString(res));
-    }
-
-    public void setText(String value) {
+    public void setText(@NonNull String value) {
         mText = value;
         mAdditionalText.setText(mText);
     }
@@ -87,5 +98,39 @@ public class ClickableTextViewRow extends LinearLayout implements View.OnClickLi
     @Override
     public void onClick(View v) {
         this.performClick();
+    }
+
+    public static class SavedState extends BaseSavedState {
+        String mState;
+
+        SavedState(Parcelable source) {
+            super(source);
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flag) {
+            super.writeToParcel(out, flag);
+            out.writeString(mState);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR = new Creator<SavedState>() {
+            @NonNull
+            @Override
+            public SavedState createFromParcel(Parcel source) {
+                return new SavedState(source);
+            }
+
+            @NonNull
+            @Contract(pure = true)
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+
+        private SavedState(Parcel source) {
+            super(source);
+            mState = source.readString();
+        }
     }
 }
