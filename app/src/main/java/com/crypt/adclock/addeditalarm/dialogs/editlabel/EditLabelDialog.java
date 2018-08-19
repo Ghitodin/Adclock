@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
-import android.support.v7.widget.AppCompatEditText;
-import android.view.inputmethod.EditorInfo;
+import android.view.LayoutInflater;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 public class EditLabelDialog extends AppCompatDialogFragment implements
         EditLabelContract.View {
+    private ConstraintLayout mMainDialog;
     private EditText mEditText;
     private CharSequence mInitialText;
     @Inject
@@ -50,19 +51,19 @@ public class EditLabelDialog extends AppCompatDialogFragment implements
     @Override
     public Dialog onCreateDialog(Bundle savedInstance) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        mEditText = new AppCompatEditText(getActivity());
-        // Views must have IDs set to automatically save instance state
-        mEditText.setId(R.id.label);
+        mMainDialog = (ConstraintLayout) inflater.inflate(
+                R.layout.label_dialog_layout,
+                null
+        );
+
+        mEditText = mMainDialog.findViewById(R.id.label);
         mEditText.setText(mInitialText);
-        mEditText.setInputType(
-                EditorInfo.TYPE_CLASS_TEXT // Needed or else we won't get automatic spacing
-                        | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES);         // between words
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // So we just call parent`s method here
                 dismiss();
             }
         })
@@ -73,7 +74,7 @@ public class EditLabelDialog extends AppCompatDialogFragment implements
                     }
                 })
                 .setTitle(R.string.label)
-                .setView(mEditText);
+                .setView(mMainDialog);
 
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {

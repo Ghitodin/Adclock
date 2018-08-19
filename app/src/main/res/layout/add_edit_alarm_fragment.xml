@@ -12,6 +12,7 @@
         android:layout_width="92dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:saveEnabled="true"
         app:layout_constraintEnd_toStartOf="@+id/amPmNumber"
         app:layout_constraintStart_toEndOf="@+id/hoursNumberPicker"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,6 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="16dp"
+        android:saveEnabled="true"
         app:layout_constraintBottom_toTopOf="@+id/ll_settings_items"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="0.0"
@@ -53,6 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="16dp"
+        android:saveEnabled="true"
         app:layout_constraintBottom_toBottomOf="@+id/days"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
@@ -133,28 +136,153 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.646">
 
-        <com.crypt.adclock.widgets.ClickableTextViewRow
-            android:id="@+id/clickable_ringtone_item"
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cl_clickable_ringtone_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AnimatedRow"
-            app:additional_text="some_description"
-            app:txt_title="@string/ringtone" />
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?selectableItemBackground"
+            android:minHeight="50dp">
 
-        <com.crypt.adclock.widgets.ClickableSwitchRow
-            android:id="@+id/clickable_switch_vibro_item"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/AnimatedRow"
-            app:sw_title="@string/vibrate" />
+            <TextView
+                android:id="@+id/tv_ringtone_row"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:gravity="center_vertical"
+                android:text="@string/ringtone"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.crypt.adclock.widgets.ClickableTextViewRow
-            android:id="@+id/clickable_label_item"
+            <TextView
+                android:id="@+id/tv_ringtone_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:freezesText="true"
+                android:gravity="center_vertical|center_horizontal"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_ringtone_row"
+                app:layout_constraintEnd_toEndOf="@+id/tv_ringtone_row"
+                app:layout_constraintHorizontal_bias="0.77"
+                app:layout_constraintStart_toStartOf="@+id/tv_ringtone_row"
+                app:layout_constraintTop_toTopOf="@+id/tv_ringtone_row"
+                app:layout_constraintVertical_bias="0.482" />
+
+            <ImageView
+                android:id="@+id/iv_ringtone_picture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:src="@android:drawable/checkbox_on_background"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_ringtone_name"
+                app:layout_constraintEnd_toEndOf="@+id/tv_ringtone_row"
+                app:layout_constraintHorizontal_bias="0.549"
+                app:layout_constraintStart_toEndOf="@+id/tv_ringtone_name"
+                app:layout_constraintTop_toTopOf="@+id/tv_ringtone_name"
+                app:layout_constraintVertical_bias="0.111" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cl_clickable_vibro_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AnimatedRow"
-            app:additional_text="some_description"
-            app:txt_title="@string/label" />
+            android:background="@android:color/transparent"
+            android:foreground="?selectableItemBackground"
+            android:minHeight="50dp">
+
+            <TextView
+                android:id="@+id/tv_vibro_title"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:gravity="center_vertical"
+                android:text="@string/vibrate"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/sc_vibro_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_alignRight="@id/tv_vibro_title"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:theme="@style/SwitchButtonRed"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_vibro_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.975"
+                app:layout_constraintStart_toStartOf="@+id/tv_vibro_title"
+                app:layout_constraintTop_toTopOf="@+id/tv_vibro_title" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cl_clickable_label_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?selectableItemBackground"
+            android:minHeight="50dp">
+
+            <TextView
+                android:id="@+id/tv_label_row"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:gravity="center_vertical"
+                android:text="@string/label"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:freezesText="true"
+                android:gravity="center_vertical|center_horizontal"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_label_row"
+                app:layout_constraintEnd_toEndOf="@+id/tv_label_row"
+                app:layout_constraintHorizontal_bias="0.77"
+                app:layout_constraintStart_toStartOf="@+id/tv_label_row"
+                app:layout_constraintTop_toTopOf="@+id/tv_label_row"
+                app:layout_constraintVertical_bias="0.482" />
+
+            <ImageView
+                android:id="@+id/iv_arrow_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:src="@android:drawable/checkbox_on_background"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_label"
+                app:layout_constraintEnd_toEndOf="@+id/tv_label_row"
+                app:layout_constraintHorizontal_bias="0.549"
+                app:layout_constraintStart_toEndOf="@+id/tv_label"
+                app:layout_constraintTop_toTopOf="@+id/tv_label"
+                app:layout_constraintVertical_bias="0.111" />
+
+        </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>
 

@@ -8,13 +8,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.crypt.adclock.R;
@@ -23,8 +25,6 @@ import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialo
 import com.crypt.adclock.di.ActivityScoped;
 import com.crypt.adclock.util.ColorFromThemeUtil;
 import com.crypt.adclock.util.WeekDays;
-import com.crypt.adclock.widgets.ClickableSwitchRow;
-import com.crypt.adclock.widgets.ClickableTextViewRow;
 import com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker;
 
 import java.util.ArrayList;
@@ -36,8 +36,7 @@ import dagger.android.support.DaggerFragment;
 @ActivityScoped
 public class AddEditAlarmFragment extends DaggerFragment implements
         AddEditAlarmContract.View,
-        View.OnClickListener,
-        CompoundButton.OnCheckedChangeListener {
+        View.OnClickListener {
 
     @Inject
     AddEditAlarmContract.Presenter mPresenter;
@@ -52,9 +51,13 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     MaterialNumberPicker mMinutesNumberPicker;
     MaterialNumberPicker mAmPmPicker;
 
-    ClickableTextViewRow mRingtoneSettingsRow;
-    ClickableSwitchRow mVibroSettingsRow;
-    ClickableTextViewRow mLabelSettingsRow;
+    ConstraintLayout mRingtoneItem;
+    ConstraintLayout mVibrationItem;
+    ConstraintLayout mLabelItem;
+
+    TextView mLabel;
+    TextView mRingtoneName;
+    SwitchCompat mVibrationSwitch;
 
     ColorStateList mDayToggleColors;
     ToggleButton[] mDays;
@@ -79,7 +82,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.saveAlarm(mLabelSettingsRow.getText(), null, null);
+                mPresenter.saveAlarm(mLabel.getText().toString(), null, null);
             }
         });
     }
@@ -92,9 +95,13 @@ public class AddEditAlarmFragment extends DaggerFragment implements
         mMinutesNumberPicker = root.findViewById(R.id.minutesNumberPicker);
         mAmPmPicker = root.findViewById(R.id.amPmNumber);
 
-        mRingtoneSettingsRow = root.findViewById(R.id.clickable_ringtone_item);
-        mVibroSettingsRow = root.findViewById(R.id.clickable_switch_vibro_item);
-        mLabelSettingsRow = root.findViewById(R.id.clickable_label_item);
+        mRingtoneItem = root.findViewById(R.id.cl_clickable_ringtone_item);
+        mVibrationItem = root.findViewById(R.id.cl_clickable_vibro_item);
+        mLabelItem = root.findViewById(R.id.cl_clickable_label_item);
+
+        mLabel = root.findViewById(R.id.tv_label);
+        mRingtoneName = root.findViewById(R.id.tv_ringtone_name);
+        mVibrationSwitch = root.findViewById(R.id.sc_vibro_switch);
 
         mDays = new ToggleButton[7];
         initColorForToggleStates();
@@ -124,8 +131,9 @@ public class AddEditAlarmFragment extends DaggerFragment implements
         mMinutesNumberPicker.setFormatter(timeFormatter);
         mAmPmPicker.setFormatter(amPmFormatter);
 
-        mRingtoneSettingsRow.setOnClickListener(this);
-        mLabelSettingsRow.setOnClickListener(this);
+        mRingtoneItem.setOnClickListener(this);
+        mLabelItem.setOnClickListener(this);
+        mVibrationItem.setOnClickListener(this);
 
         return root;
     }
@@ -145,54 +153,27 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clickable_ringtone_item:
+            case R.id.cl_clickable_ringtone_item:
                 mPresenter.pickRingtone();
                 break;
-            case R.id.clickable_label_item:
-                mPresenter.editLabel(mLabelSettingsRow.getText());
+            case R.id.cl_clickable_label_item:
+                mPresenter.editLabel(mLabel.getText().toString());
                 break;
-        }
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        int day;
-        switch (compoundButton.getId()) {
-            case R.id.day1:
-                day = 0;
+            case R.id.cl_clickable_vibro_item:
+                mVibrationSwitch.setChecked(!mVibrationSwitch.isChecked());
                 break;
-            case R.id.day2:
-                day = 1;
-                break;
-            case R.id.day3:
-                day = 2;
-                break;
-            case R.id.day4:
-                day = 3;
-                break;
-            case R.id.day5:
-                day = 4;
-                break;
-            case R.id.day6:
-                day = 5;
-                break;
-            case R.id.day7:
-                day = 6;
-                break;
-            default:
-                return;
         }
     }
 
     @Override
     public void displayRingtoneName(String ringtoneName) {
-        mRingtoneSettingsRow.setText(ringtoneName);
+        mRingtoneName.setText(ringtoneName);
     }
 
     @Override
     public void displayLabel(String label) {
         // Displaying label name
-        mLabelSettingsRow.setText(label);
+        mLabel.setText(label);
     }
 
     @Override
@@ -232,12 +213,8 @@ public class AddEditAlarmFragment extends DaggerFragment implements
 
     @Override
     public void displayRepeatingOn(ArrayList<Boolean> repeatOn) {
-        for (int i = 0; i < repeatOn.size(); i++) {
-            //We disable listener so the check event doesn`t fire
-            mDays[i].setOnCheckedChangeListener(null);
+        for (int i = 0; i < repeatOn.size(); i++)
             mDays[i].setChecked(repeatOn.get(i));
-            mDays[i].setOnCheckedChangeListener(this);
-        }
     }
 
     // TODO Think about it
@@ -269,11 +246,12 @@ public class AddEditAlarmFragment extends DaggerFragment implements
 
         for (int i = 0; i < mDays.length; i++) {
             mDays[i].setTextColor(mDayToggleColors);
-            mDays[i].setOnCheckedChangeListener(this);
-
             String label = WeekDays.getLabel(i);
             mDays[i].setTextOn(label);
             mDays[i].setTextOff(label);
+
+            //By default we display buttons as inactive
+            mDays[i].setChecked(false);
         }
     }
 

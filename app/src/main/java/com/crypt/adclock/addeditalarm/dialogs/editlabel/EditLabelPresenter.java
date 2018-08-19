@@ -1,9 +1,5 @@
 package com.crypt.adclock.addeditalarm.dialogs.editlabel;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatDialogFragment;
-import android.text.Editable;
-import android.util.Log;
 
 import javax.inject.Inject;
 
