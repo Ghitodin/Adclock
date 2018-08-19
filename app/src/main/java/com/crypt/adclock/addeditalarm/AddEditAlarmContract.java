@@ -54,7 +54,7 @@ public interface AddEditAlarmContract {
 
         boolean isNeedToLoadData();
 
-        void loadAlarm();
+        void createOrLoadAlarm();
 
     }
 }

@@ -33,7 +33,6 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
 
     @Inject
     public RingtonePickerDialog() {
-
     }
 
     @Override
@@ -42,6 +41,7 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
         if (savedInstanceState != null) {
             mRingtoneUri = savedInstanceState.getParcelable(KEY_RINGTONE_URI);
         }
+
         mRingtoneManager = new RingtoneManager(getActivity());
         mRingtoneManager.setType(RingtoneManager.TYPE_ALARM);
     }
@@ -55,15 +55,14 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
 
     private AlertDialog createFrom(@NonNull AlertDialog.Builder builder) {
         Cursor cursor = mRingtoneManager.getCursor();
-        int checkedItem = mRingtoneManager.getRingtonePosition(mRingtoneUri);
+        int index = mRingtoneManager.getRingtonePosition(mRingtoneUri);
         String labelColumn = cursor.getColumnName(RingtoneManager.TITLE_COLUMN_INDEX);
 
         builder.setTitle(R.string.ringtones)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        destroyLocalPlayer();
-                        dismiss();
+                        onCancelPressed();
                     }
                 })
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -72,7 +71,7 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
                         onOkPressed();
                     }
                 })
-                .setSingleChoiceItems(cursor, checkedItem,
+                .setSingleChoiceItems(cursor, index,
                         labelColumn, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -122,6 +121,11 @@ public class RingtonePickerDialog extends AppCompatDialogFragment implements
         if (mPresenter != null) {
             mPresenter.selectRingtone(mRingtoneUri);
         }
+        dismiss();
+    }
+
+    private void onCancelPressed() {
+        destroyLocalPlayer();
         dismiss();
     }
 

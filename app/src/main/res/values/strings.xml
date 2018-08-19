@@ -23,4 +23,5 @@
     <string name="wednesday_capital">w</string>
     <string name="thursday_capital">t</string>
     <string name="friday_capital">f</string>
+    <string name="default_alarm_title">Alarm</string>
 </resources>

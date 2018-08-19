@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.crypt.adclock.R;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.source.AlarmsDataSource;
 import com.crypt.adclock.data.source.AlarmsRepository;
@@ -43,12 +44,11 @@ final public class AddEditAlarmPresenter implements
         mRepository = repository;
         mContext = context;
         mIsNeedToLoadData = isNeedToLoadData;
-        //createOrLoadDumbAlarm();
     }
 
     @Override
     public void saveAlarm(String title, Time time, ArrayList<Boolean> repeatDays) {
-        if (title == null || time == null || repeatDays == null) {
+        if (title == null || time == null || repeatDays == null || mSelectedRingtoneUri == null) {
             return; // Something wrong
         }
 
@@ -119,19 +119,29 @@ final public class AddEditAlarmPresenter implements
     }
 
     @Override
-    public void loadAlarm() {
-        if (isNewAlarm())
+    public void createOrLoadAlarm() {
+        if (isNewAlarm()) {
+            // create default alarm
+            mSelectedRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(mContext,
+                    RingtoneManager.TYPE_ALARM);
+            ArrayList<Boolean> defaultRepeatDays = new ArrayList<>();
+            for (int i = 0; i < 7; ++i) { // days in week
+                defaultRepeatDays.add(i != 0 && i != 6);
+            }
+            updateView(mContext.getResources().getString(R.string.default_alarm_title),
+                    defaultRepeatDays,
+                    mSelectedRingtoneUri);
             return;
+        }
 
         mRepository.get(mAlarmId, this);
-
     }
 
     @Override
     public void takeView(AddEditAlarmContract.View view) {
         mView = view;
-        if (!isNewAlarm() && mIsNeedToLoadData.get()) {
-            loadAlarm();
+        if (mIsNeedToLoadData.get()) {
+            createOrLoadAlarm();
         }
     }
 
@@ -150,33 +160,19 @@ final public class AddEditAlarmPresenter implements
         return mAlarmId == null;
     }
 
-    private void updateView(Alarm alarm) {
+    private void updateView(String alarmTitle, ArrayList<Boolean> repeatDays, Uri ringtoneUri) {
         if (mView != null && mView.isActive()) {
-            mView.displayRepeatingOn(alarm.getRepeatDays());
-            mView.displayRingtoneName(getRingtoneNameFromUri(alarm.getRingtoneUri()));
-            mView.displayLabel(alarm.getTitle());
+            mView.displayRepeatingOn(repeatDays);
+            mView.displayRingtoneName(getRingtoneNameFromUri(ringtoneUri));
+            mView.displayLabel(alarmTitle);
         }
-    }
-
-    private Uri getSelectedRingtoneUri() {
-        Uri selectedRingtoneUri;
-        String ringtone = "";//mAlarm.getRingtoneUri();
-        if (ringtone.isEmpty()) {
-            // If ringtone is not specified, we take the default ringtone.
-            selectedRingtoneUri =
-                    RingtoneManager.getActualDefaultRingtoneUri(mContext,
-                            RingtoneManager.TYPE_ALARM);
-        } else {
-            selectedRingtoneUri = Uri.parse(ringtone);
-        }
-
-        return selectedRingtoneUri;
     }
 
     @Override
     public void onLoaded(Alarm alarm) {
-        updateView(alarm);
+        updateView(alarm.getTitle(), alarm.getRepeatDays(), alarm.getRingtoneUri());
         mIsAlarmActive = alarm.isActive();
+        mSelectedRingtoneUri = alarm.getRingtoneUri();
     }
 
     @Override
