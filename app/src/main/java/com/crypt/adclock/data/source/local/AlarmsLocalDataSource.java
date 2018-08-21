@@ -20,11 +20,27 @@ public class AlarmsLocalDataSource implements AlarmsDataSource {
 
     private final AlarmsDao mDao;
     private final AppExecutors mExecutors;
+    private Alarm mRetainedAlarm;
 
     @Inject
     public AlarmsLocalDataSource(@NonNull AppExecutors executors, @NonNull AlarmsDao dao) {
         mExecutors = executors;
         mDao = dao;
+    }
+
+    @Override
+    public void retain(@NonNull Alarm alarm) {
+        mRetainedAlarm = alarm;
+    }
+
+    @Override
+    public void restoreRetained(@NonNull LoadAlarmCallback callback) {
+        if (mRetainedAlarm != null) {
+            callback.onLoaded(mRetainedAlarm);
+            mRetainedAlarm = null;
+        } else {
+            callback.onNotAvailable();
+        }
     }
 
     @Override

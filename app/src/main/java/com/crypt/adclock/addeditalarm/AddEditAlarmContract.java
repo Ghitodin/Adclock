@@ -5,7 +5,6 @@ import android.net.Uri;
 import com.crypt.adclock.BasePresenter;
 import com.crypt.adclock.BaseView;
 
-import java.sql.Time;
 import java.util.ArrayList;
 
 /**
@@ -34,7 +33,7 @@ public interface AddEditAlarmContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        void saveAlarm(String title, Time time, ArrayList<Boolean> repeatDays);
+        void saveAlarm();
 
         void setHours(int hours);
 
@@ -48,7 +47,7 @@ public interface AddEditAlarmContract {
 
         void editRepeatMode();
 
-        void editLabel(String currentLabel);
+        void editLabel();
 
         void pickRingtone();
 

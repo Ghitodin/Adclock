@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 import javax.inject.Inject;
 
@@ -31,8 +32,7 @@ final public class AddEditAlarmPresenter implements
     private Context mContext;
     private final AlarmsDataSource mRepository;
     private Lazy<Boolean> mIsNeedToLoadData;
-    private boolean mIsAlarmActive = true;
-    private Uri mSelectedRingtoneUri;
+    private Alarm mAlarm;
 
     @Nullable
     private String mAlarmId;
@@ -47,19 +47,11 @@ final public class AddEditAlarmPresenter implements
     }
 
     @Override
-    public void saveAlarm(String title, Time time, ArrayList<Boolean> repeatDays) {
-        if (title == null || time == null || repeatDays == null || mSelectedRingtoneUri == null) {
-            return; // Something wrong
-        }
-
+    public void saveAlarm() {
         if (isNewAlarm()) {
-            Alarm newAlarm = new Alarm(title, time, repeatDays, mIsAlarmActive,
-                    mSelectedRingtoneUri);
-            mRepository.save(newAlarm);
+            mRepository.save(mAlarm);
         } else {
-            Alarm editedAlarm = new Alarm(mAlarmId, title, time, repeatDays,
-                    mIsAlarmActive, mSelectedRingtoneUri);
-            mRepository.update(editedAlarm);
+            mRepository.update(mAlarm);
         }
         if (mView != null) {
             mView.finishAddEdit();
@@ -78,7 +70,7 @@ final public class AddEditAlarmPresenter implements
 
     @Override
     public void setRingtone(Uri uri) {
-        mSelectedRingtoneUri = uri;
+        mAlarm.setRingtoneUri(uri);
         if (mView != null) {
             mView.displayRingtoneName(getRingtoneNameFromUri(uri));
         }
@@ -86,6 +78,7 @@ final public class AddEditAlarmPresenter implements
 
     @Override
     public void setLabel(String label) {
+        mAlarm.setTitle(label);
         if (mView != null) {
             mView.displayLabel(label);
         }
@@ -101,15 +94,15 @@ final public class AddEditAlarmPresenter implements
     }
 
     @Override
-    public void editLabel(String currentLabel) {
+    public void editLabel() {
         if (mView != null)
-            mView.showLabelInputDialog(currentLabel);
+            mView.showLabelInputDialog(mAlarm.getTitle());
     }
 
     @Override
     public void pickRingtone() {
         if (mView != null)
-            mView.showPickRingtoneDialog(mSelectedRingtoneUri);
+            mView.showPickRingtoneDialog(mAlarm.getRingtoneUri());
     }
 
     @Contract(pure = true)
@@ -118,23 +111,36 @@ final public class AddEditAlarmPresenter implements
         return false;
     }
 
+    @NonNull
+    private Alarm getDefaultAlarm() {
+        String defaultAlarmTitle = mContext.getResources()
+                .getString(R.string.default_alarm_title);
+
+        ArrayList<Boolean> defaultAlarmRepeatDays = new ArrayList<>();
+        for (int i = 0; i < 7; ++i) { // days in week
+            defaultAlarmRepeatDays.add(i != 0 && i != 6);
+        }
+
+        Uri defaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(mContext,
+                RingtoneManager.TYPE_ALARM);
+
+        updateView(defaultAlarmTitle,
+                defaultAlarmRepeatDays,
+                defaultRingtoneUri);
+
+        long currentTime = new GregorianCalendar().getTime().getTime();
+        Time defaultAlarmTime = new Time(currentTime);
+        return new Alarm(defaultAlarmTitle, defaultAlarmTime, defaultAlarmRepeatDays,
+                true, defaultRingtoneUri);
+    }
+
     @Override
     public void createOrLoadAlarm() {
         if (isNewAlarm()) {
-            // create default alarm
-            mSelectedRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(mContext,
-                    RingtoneManager.TYPE_ALARM);
-            ArrayList<Boolean> defaultRepeatDays = new ArrayList<>();
-            for (int i = 0; i < 7; ++i) { // days in week
-                defaultRepeatDays.add(i != 0 && i != 6);
-            }
-            updateView(mContext.getResources().getString(R.string.default_alarm_title),
-                    defaultRepeatDays,
-                    mSelectedRingtoneUri);
-            return;
+            onLoaded(getDefaultAlarm());
+        } else {
+            mRepository.get(mAlarmId, this);
         }
-
-        mRepository.get(mAlarmId, this);
     }
 
     @Override
@@ -142,11 +148,14 @@ final public class AddEditAlarmPresenter implements
         mView = view;
         if (mIsNeedToLoadData.get()) {
             createOrLoadAlarm();
+        } else {
+            mRepository.restoreRetained(this);
         }
     }
 
     @Override
     public void dropView() {
+        mRepository.retain(mAlarm);
         mView = null;
     }
 
@@ -171,8 +180,7 @@ final public class AddEditAlarmPresenter implements
     @Override
     public void onLoaded(Alarm alarm) {
         updateView(alarm.getTitle(), alarm.getRepeatDays(), alarm.getRingtoneUri());
-        mIsAlarmActive = alarm.isActive();
-        mSelectedRingtoneUri = alarm.getRingtoneUri();
+        mAlarm = alarm;
     }
 
     @Override

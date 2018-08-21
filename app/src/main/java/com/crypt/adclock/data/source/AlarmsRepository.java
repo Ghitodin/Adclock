@@ -21,6 +21,7 @@ public class AlarmsRepository implements AlarmsDataSource {
     private final AlarmsDataSource mLocalDataSource;
 
     private Map<String, Alarm> mCachedAlarms = new LinkedHashMap<>();
+    private Alarm mCachedRetainedAlarm;
 
     private boolean mCacheIsValid = false;
 
@@ -41,8 +42,25 @@ public class AlarmsRepository implements AlarmsDataSource {
     }
 
     @Override
+    public void retain(@NonNull Alarm alarm) {
+        mCachedRetainedAlarm = alarm;
+        mLocalDataSource.retain(alarm);
+    }
+
+    @Override
+    public void restoreRetained(@NonNull LoadAlarmCallback callback) {
+        if (mCachedRetainedAlarm != null) {
+            callback.onLoaded(mCachedRetainedAlarm);
+            mCachedRetainedAlarm = null;
+            return;
+        }
+
+        mLocalDataSource.restoreRetained(callback);
+    }
+
+    @Override
     public void getAll(@NonNull final LoadAllAlarmsCallback callback) {
-        if (!mCacheIsValid) {
+        if (mCacheIsValid) {
             callback.onLoaded(new ArrayList<>(mCachedAlarms.values()));
             return;
         }

@@ -27,6 +27,10 @@ public interface AlarmsDataSource {
 
     }
 
+    void retain(@NonNull Alarm alarm); // Retain alarm from activity destroying
+
+    void restoreRetained(@NonNull LoadAlarmCallback callback);
+
     void getAll(@NonNull LoadAllAlarmsCallback callback);
 
     void get(@NonNull String id, @NonNull LoadAlarmCallback callback);

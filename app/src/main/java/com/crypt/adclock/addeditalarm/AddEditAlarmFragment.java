@@ -82,7 +82,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.saveAlarm(mLabel.getText().toString(), null, null);
+                mPresenter.saveAlarm();
             }
         });
     }
@@ -157,7 +157,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
                 mPresenter.pickRingtone();
                 break;
             case R.id.cl_clickable_label_item:
-                mPresenter.editLabel(mLabel.getText().toString());
+                mPresenter.editLabel();
                 break;
             case R.id.cl_clickable_vibro_item:
                 mVibrationSwitch.setChecked(!mVibrationSwitch.isChecked());
