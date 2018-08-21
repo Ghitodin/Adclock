@@ -34,7 +34,7 @@ public final class WeekDays {
     /**
      * @param weekday the zero-based index of the week day you would like to get the label for.
      */
-    public static String getLabel(int weekday) {
+    public static String getDayShortName(int weekday) {
         // This array is returned from DateFormatSymbols.getShortWeekdays().
         return LABELS[weekday + 1];
     }

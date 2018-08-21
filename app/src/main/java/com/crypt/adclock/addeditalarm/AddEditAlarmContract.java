@@ -19,7 +19,9 @@ public interface AddEditAlarmContract {
 
         void displayLabel(String description);
 
-        void displayRepeatingOn(ArrayList<Boolean> repeatDays);
+        void displayRepeatingDays(ArrayList<Boolean> repeatDays);
+
+        void displayVibroMode(boolean isEnabled);
 
         void showLabelInputDialog(String currentLabel);
 
@@ -45,7 +47,7 @@ public interface AddEditAlarmContract {
 
         void setVibrateMode(boolean isVibrateOn);
 
-        void editRepeatMode();
+        void setRepeatingDays(ArrayList<Boolean> week);
 
         void editLabel();
 

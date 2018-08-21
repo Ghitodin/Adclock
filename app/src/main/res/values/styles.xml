@@ -27,6 +27,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@drawable/selector_day_toggles</item>
     </style>
 
     <style name="SelectableButton">

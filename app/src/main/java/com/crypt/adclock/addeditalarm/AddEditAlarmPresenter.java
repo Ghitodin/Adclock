@@ -86,23 +86,29 @@ final public class AddEditAlarmPresenter implements
 
     @Override
     public void setVibrateMode(boolean isVibrateOn) {
-
+        // TODO Implement setting to alarm and updating view
     }
 
     @Override
-    public void editRepeatMode() {
+    public void setRepeatingDays(ArrayList<Boolean> week) {
+        mAlarm.setRepeatDays(week);
+        if (mView != null) {
+            mView.displayRepeatingDays(mAlarm.getRepeatDays());
+        }
     }
 
     @Override
     public void editLabel() {
-        if (mView != null)
+        if (mView != null) {
             mView.showLabelInputDialog(mAlarm.getTitle());
+        }
     }
 
     @Override
     public void pickRingtone() {
-        if (mView != null)
+        if (mView != null) {
             mView.showPickRingtoneDialog(mAlarm.getRingtoneUri());
+        }
     }
 
     @Contract(pure = true)
@@ -171,7 +177,7 @@ final public class AddEditAlarmPresenter implements
 
     private void updateView(String alarmTitle, ArrayList<Boolean> repeatDays, Uri ringtoneUri) {
         if (mView != null && mView.isActive()) {
-            mView.displayRepeatingOn(repeatDays);
+            mView.displayRepeatingDays(repeatDays);
             mView.displayRingtoneName(getRingtoneNameFromUri(ringtoneUri));
             mView.displayLabel(alarmTitle);
         }
