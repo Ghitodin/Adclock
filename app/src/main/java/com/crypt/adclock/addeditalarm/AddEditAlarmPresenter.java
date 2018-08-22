@@ -31,7 +31,9 @@ final public class AddEditAlarmPresenter implements
     private AddEditAlarmContract.View mView;
     private Context mContext;
     private final AlarmsDataSource mRepository;
-    private Lazy<Boolean> mIsNeedToLoadData;
+    private Lazy<Boolean> mIsNeedToLoadDataLazy;
+    private boolean mIsNeedToLoadData;
+    @Nullable
     private Alarm mAlarm;
 
     @Nullable
@@ -43,11 +45,15 @@ final public class AddEditAlarmPresenter implements
         mAlarmId = alarmId;
         mRepository = repository;
         mContext = context;
-        mIsNeedToLoadData = isNeedToLoadData;
+        mIsNeedToLoadDataLazy = isNeedToLoadData;
     }
 
     @Override
     public void saveAlarm() {
+        if (mAlarm == null) {
+            return;
+        }
+
         if (isNewAlarm()) {
             mRepository.save(mAlarm);
         } else {
@@ -60,16 +66,39 @@ final public class AddEditAlarmPresenter implements
 
     @Override
     public void setHours(int hours) {
+        if (mAlarm == null) {
+            return;
+        }
 
+        final Time currentAlarmTime = mAlarm.getTime();
+        final Time newTime = new Time(hours, currentAlarmTime.getMinutes(), 0);
+
+        mAlarm.setTime(newTime);
+        if (mView != null) {
+            mView.displayTime(newTime);
+        }
     }
 
     @Override
     public void setMinutes(int minutes) {
+        if (mAlarm == null) {
+            return;
+        }
 
+        final Time currentAlarmTime = mAlarm.getTime();
+        final Time newTime = new Time(currentAlarmTime.getHours(), minutes, 0);
+        mAlarm.setTime(newTime);
+        if (mView != null) {
+            mView.displayTime(newTime);
+        }
     }
 
     @Override
     public void setRingtone(Uri uri) {
+        if (mAlarm == null) {
+            return;
+        }
+
         mAlarm.setRingtoneUri(uri);
         if (mView != null) {
             mView.displayRingtoneName(getRingtoneNameFromUri(uri));
@@ -78,19 +107,34 @@ final public class AddEditAlarmPresenter implements
 
     @Override
     public void setLabel(String label) {
+        if (mAlarm == null) {
+            return;
+        }
+
         mAlarm.setTitle(label);
         if (mView != null) {
-            mView.displayLabel(label);
+            mView.displayLabel(mAlarm.getTitle());
         }
     }
 
     @Override
     public void setVibrateMode(boolean isVibrateOn) {
-        // TODO Implement setting to alarm and updating view
+        if (mAlarm == null) {
+            return;
+        }
+
+        mAlarm.setVibrateEnabled(isVibrateOn);
+        if (mView != null) {
+            mView.displayVibrateMode(mAlarm.isVibrateEnabled());
+        }
     }
 
     @Override
     public void setRepeatingDays(ArrayList<Boolean> week) {
+        if (mAlarm == null) {
+            return;
+        }
+
         mAlarm.setRepeatDays(week);
         if (mView != null) {
             mView.displayRepeatingDays(mAlarm.getRepeatDays());
@@ -99,6 +143,10 @@ final public class AddEditAlarmPresenter implements
 
     @Override
     public void editLabel() {
+        if (mAlarm == null) {
+            return;
+        }
+
         if (mView != null) {
             mView.showLabelInputDialog(mAlarm.getTitle());
         }
@@ -106,6 +154,10 @@ final public class AddEditAlarmPresenter implements
 
     @Override
     public void pickRingtone() {
+        if (mAlarm == null) {
+            return;
+        }
+
         if (mView != null) {
             mView.showPickRingtoneDialog(mAlarm.getRingtoneUri());
         }
@@ -114,7 +166,7 @@ final public class AddEditAlarmPresenter implements
     @Contract(pure = true)
     @Override
     public boolean isNeedToLoadData() {
-        return false;
+        return mIsNeedToLoadData;
     }
 
     @NonNull
@@ -122,22 +174,21 @@ final public class AddEditAlarmPresenter implements
         String defaultAlarmTitle = mContext.getResources()
                 .getString(R.string.default_alarm_title);
 
-        ArrayList<Boolean> defaultAlarmRepeatDays = new ArrayList<>();
+        final ArrayList<Boolean> defaultAlarmRepeatDays = new ArrayList<>();
         for (int i = 0; i < 7; ++i) { // days in week
             defaultAlarmRepeatDays.add(i != 0 && i != 6);
         }
 
-        Uri defaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(mContext,
+        final Uri defaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(mContext,
                 RingtoneManager.TYPE_ALARM);
 
-        updateView(defaultAlarmTitle,
-                defaultAlarmRepeatDays,
-                defaultRingtoneUri);
+        final boolean defaultVibrateMod = true;
 
-        long currentTime = new GregorianCalendar().getTime().getTime();
-        Time defaultAlarmTime = new Time(currentTime);
+        final long currentTime = new GregorianCalendar().getTime().getTime();
+        final Time defaultAlarmTime = new Time(currentTime);
+
         return new Alarm(defaultAlarmTitle, defaultAlarmTime, defaultAlarmRepeatDays,
-                true, defaultRingtoneUri);
+                true, defaultRingtoneUri, defaultVibrateMod);
     }
 
     @Override
@@ -152,7 +203,8 @@ final public class AddEditAlarmPresenter implements
     @Override
     public void takeView(AddEditAlarmContract.View view) {
         mView = view;
-        if (mIsNeedToLoadData.get()) {
+        mIsNeedToLoadData = mIsNeedToLoadDataLazy.get();
+        if (mIsNeedToLoadData) {
             createOrLoadAlarm();
         } else {
             mRepository.restoreRetained(this);
@@ -161,7 +213,9 @@ final public class AddEditAlarmPresenter implements
 
     @Override
     public void dropView() {
-        mRepository.retain(mAlarm);
+        if (mAlarm != null) {
+            mRepository.retain(mAlarm);
+        }
         mView = null;
     }
 
@@ -175,18 +229,23 @@ final public class AddEditAlarmPresenter implements
         return mAlarmId == null;
     }
 
-    private void updateView(String alarmTitle, ArrayList<Boolean> repeatDays, Uri ringtoneUri) {
+    private void updateView(String alarmTitle, ArrayList<Boolean> repeatDays, Uri ringtoneUri,
+                            boolean isVibrateEnabled, Time alarmTime) {
         if (mView != null && mView.isActive()) {
             mView.displayRepeatingDays(repeatDays);
             mView.displayRingtoneName(getRingtoneNameFromUri(ringtoneUri));
             mView.displayLabel(alarmTitle);
+            mView.displayVibrateMode(isVibrateEnabled);
+            mView.displayTime(alarmTime);
         }
     }
 
     @Override
     public void onLoaded(Alarm alarm) {
-        updateView(alarm.getTitle(), alarm.getRepeatDays(), alarm.getRingtoneUri());
         mAlarm = alarm;
+        updateView(mAlarm.getTitle(), mAlarm.getRepeatDays(), mAlarm.getRingtoneUri(),
+                mAlarm.isVibrateEnabled(), mAlarm.getTime());
+        mIsNeedToLoadData = false;
     }
 
     @Override

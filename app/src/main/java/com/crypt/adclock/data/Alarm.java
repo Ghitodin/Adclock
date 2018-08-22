@@ -46,19 +46,23 @@ public class Alarm {
     private boolean isActive;
 
     @NonNull
-    @ColumnInfo(name = "ringtoneUri")
+    @ColumnInfo(name = "ringtone_uri")
     private Uri ringtoneUri;
+
+    @ColumnInfo(name = "is_vibrate_enabled")
+    private boolean isVibrateEnabled;
 
 
     public Alarm(@NonNull String id, @Nullable String title, @NonNull Time time,
                  @NonNull ArrayList<Boolean> repeatDays, boolean isActive,
-                 @NonNull Uri ringtoneUri) {
+                 @NonNull Uri ringtoneUri, boolean isVibrateEnabled) {
         this.id = id;
         this.title = title;
         this.time = time;
         this.repeatDays = repeatDays;
         this.isActive = isActive;
         this.ringtoneUri = ringtoneUri;
+        this.isVibrateEnabled = isVibrateEnabled;
     }
 
     /**
@@ -67,9 +71,9 @@ public class Alarm {
     @Ignore
     public Alarm(@Nullable String title, @NonNull Time time,
                  @NonNull ArrayList<Boolean> repeatDays, boolean isActive,
-                 @NonNull Uri ringtoneUri) {
+                 @NonNull Uri ringtoneUri, boolean isVibrateEnabled) {
         this(UUID.randomUUID().toString(), title, time, repeatDays,
-                isActive, ringtoneUri);
+                isActive, ringtoneUri, isVibrateEnabled);
     }
 
     @NonNull
@@ -123,6 +127,14 @@ public class Alarm {
 
     public void setRingtoneUri(@NonNull Uri ringtoneUri) {
         this.ringtoneUri = ringtoneUri;
+    }
+
+    public void setVibrateEnabled(boolean isVibrateEnabled) {
+        this.isVibrateEnabled = isVibrateEnabled;
+    }
+
+    public boolean isVibrateEnabled() {
+        return isVibrateEnabled;
     }
 
     // Returns true if alarm should ring on this day of week.

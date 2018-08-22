@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.crypt.adclock.BasePresenter;
 import com.crypt.adclock.BaseView;
 
+import java.sql.Time;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +22,9 @@ public interface AddEditAlarmContract {
 
         void displayRepeatingDays(ArrayList<Boolean> repeatDays);
 
-        void displayVibroMode(boolean isEnabled);
+        void displayTime(Time time);
+
+        void displayVibrateMode(boolean isEnabled);
 
         void showLabelInputDialog(String currentLabel);
 

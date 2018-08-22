@@ -22,9 +22,11 @@ import com.crypt.adclock.R;
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelDialog;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerDialog;
 import com.crypt.adclock.di.ActivityScoped;
+import com.crypt.adclock.util.TimeFormat;
 import com.crypt.adclock.util.WeekDays;
 import com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker;
 
+import java.sql.Time;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -58,7 +60,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
 
     @BindView(R.id.cl_clickable_ringtone_item)
     ConstraintLayout mRingtoneItem;
-    @BindView(R.id.cl_clickable_vibro_item)
+    @BindView(R.id.cl_clickable_vibrate_item)
     ConstraintLayout mVibrationItem;
     @BindView(R.id.cl_clickable_label_item)
     ConstraintLayout mLabelItem;
@@ -118,6 +120,7 @@ public class AddEditAlarmFragment extends DaggerFragment implements
             }
         };
         NumberPicker.Formatter amPmFormatter = new NumberPicker.Formatter() {
+            @NonNull
             @Override
             public String format(int value) {
                 if (value == AM_INT)
@@ -132,6 +135,32 @@ public class AddEditAlarmFragment extends DaggerFragment implements
         mHoursNumberPicker.setFormatter(timeFormatter);
         mMinutesNumberPicker.setFormatter(timeFormatter);
         mAmPmPicker.setFormatter(amPmFormatter);
+
+        mHoursNumberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                boolean isAm = (mAmPmPicker.getValue() == AM_INT);
+                int base24hours = TimeFormat.base12toBase24Hours(newVal, isAm);
+                mPresenter.setHours(base24hours);
+            }
+        });
+
+        mMinutesNumberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                mPresenter.setMinutes(newVal);
+            }
+        });
+
+        mAmPmPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                boolean isAm = (newVal == AM_INT);
+                int base12hours = mHoursNumberPicker.getValue();
+                int base24hours = TimeFormat.base12toBase24Hours(base12hours, isAm);
+                mPresenter.setHours(base24hours);
+            }
+        });
 
         return root;
     }
@@ -167,14 +196,16 @@ public class AddEditAlarmFragment extends DaggerFragment implements
         mPresenter.editLabel();
     }
 
-    @OnClick(R.id.cl_clickable_vibro_item)
-    void onVibroModeClicked() {
+    @OnClick(R.id.cl_clickable_vibrate_item)
+    void onVibrateModeClicked() {
         mVibrationSwitch.setChecked(!mVibrationSwitch.isChecked());
     }
 
     @OnCheckedChanged(R.id.sc_vibro_switch)
-    void onVibroCheckedChanged(SwitchCompat button) {
-        mPresenter.setVibrateMode(button.isChecked());
+    void onVibrateCheckedChanged(SwitchCompat button) {
+        if (mVibrationSwitch.isPressed()) { // Prevents Android issue with automatic call this method
+            mPresenter.setVibrateMode(button.isChecked());
+        }
     }
 
     @Override
@@ -184,7 +215,6 @@ public class AddEditAlarmFragment extends DaggerFragment implements
 
     @Override
     public void displayLabel(String label) {
-        // Displaying label name
         mLabel.setText(label);
     }
 
@@ -201,7 +231,17 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     }
 
     @Override
-    public void displayVibroMode(boolean isEnabledInPresenter) {
+    public void displayTime(Time time) {
+        int hours24based = time.getHours();
+        int hours12based = TimeFormat.base24toBase12hours(hours24based);
+        int amOrPm = (TimeFormat.isAm(hours24based) ? AM_INT : PM_INT);
+        mHoursNumberPicker.setValue(hours12based);
+        mMinutesNumberPicker.setValue(time.getMinutes());
+        mAmPmPicker.setValue(amOrPm);
+    }
+
+    @Override
+    public void displayVibrateMode(boolean isEnabledInPresenter) {
         boolean isEnabledInView = mVibrationSwitch.isChecked();
         if (isEnabledInView != isEnabledInPresenter) {
             mVibrationSwitch.setChecked(isEnabledInPresenter);

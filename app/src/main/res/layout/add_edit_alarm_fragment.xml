@@ -192,7 +192,7 @@
 
         <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/cl_clickable_vibro_item"
+            android:id="@+id/cl_clickable_vibrate_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
