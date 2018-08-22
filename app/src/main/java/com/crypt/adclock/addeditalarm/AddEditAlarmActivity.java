@@ -2,6 +2,7 @@ package com.crypt.adclock.addeditalarm;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 
@@ -10,6 +11,9 @@ import com.crypt.adclock.util.ActivityUtils;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import dagger.android.support.DaggerAppCompatActivity;
 
 public class AddEditAlarmActivity extends DaggerAppCompatActivity {
@@ -31,13 +35,29 @@ public class AddEditAlarmActivity extends DaggerAppCompatActivity {
     @Inject
     String mAlarmId;
 
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.fabSaveAlarm)
+    FloatingActionButton fab;
+
+    interface OnFloatingButtonClickedListener {
+
+        void onSaveFabClicked();
+
+    }
+
+    @OnClick(R.id.fabSaveAlarm)
+    void onFabClicked() {
+        if (mFragment != null)
+            mFragment.onSaveFabClicked();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_edit_alarm_activity);
+        ButterKnife.bind(this);
 
-        // Set up the toolbar.
-        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -81,4 +101,5 @@ public class AddEditAlarmActivity extends DaggerAppCompatActivity {
     public boolean isNeedToLoadData() {
         return mIsNeedToLoadData;
     }
+
 }

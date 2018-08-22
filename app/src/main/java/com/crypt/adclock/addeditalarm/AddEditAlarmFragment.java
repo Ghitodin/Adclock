@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
@@ -40,7 +39,8 @@ import dagger.android.support.DaggerFragment;
 
 @ActivityScoped
 public class AddEditAlarmFragment extends DaggerFragment implements
-        AddEditAlarmContract.View {
+        AddEditAlarmContract.View,
+        AddEditAlarmActivity.OnFloatingButtonClickedListener {
 
     @Inject
     AddEditAlarmContract.Presenter mPresenter;
@@ -85,22 +85,6 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     @Inject
     public AddEditAlarmFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // TODO Move fab view binding to activity, implement callback for notifying fragment about
-        // click action
-        FloatingActionButton fab = getActivity().findViewById(R.id.fabSaveAlarm);
-        fab.setImageResource(R.drawable.ic_done);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.saveAlarm();
-            }
-        });
     }
 
     @Override
@@ -206,6 +190,11 @@ public class AddEditAlarmFragment extends DaggerFragment implements
         if (mVibrationSwitch.isPressed()) { // Prevents Android issue with automatic call this method
             mPresenter.setVibrateMode(button.isChecked());
         }
+    }
+
+    @Override
+    public void onSaveFabClicked() {
+        mPresenter.saveAlarm();
     }
 
     @Override
