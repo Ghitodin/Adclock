@@ -6,7 +6,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -187,7 +186,8 @@ public class AddEditAlarmFragment extends DaggerFragment implements
 
     @OnCheckedChanged(R.id.sc_vibro_switch)
     void onVibrateCheckedChanged(SwitchCompat button) {
-        if (mVibrationSwitch.isPressed()) { // Prevents Android issue with automatic call this method
+        // Prevents Android issue with automatic call this method
+        if (mVibrationSwitch.isPressed() || mVibrationItem.isPressed()) {
             mPresenter.setVibrateMode(button.isChecked());
         }
     }
