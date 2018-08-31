@@ -22,5 +22,6 @@
     <dimen name="list_item_padding">8dp</dimen>
 
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="time_size">35sp</dimen>
 
 </resources>

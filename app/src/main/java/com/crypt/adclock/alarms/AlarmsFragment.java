@@ -4,18 +4,20 @@ package com.crypt.adclock.alarms;
  * Created by Ghito on 08-Mar-18.
  */
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.crypt.adclock.R;
@@ -23,14 +25,17 @@ import com.crypt.adclock.addeditalarm.AddEditAlarmActivity;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.di.ActivityScoped;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import dagger.android.support.DaggerFragment;
-
-import static android.support.v4.util.Preconditions.checkNotNull;
 
 @ActivityScoped
 public class AlarmsFragment extends DaggerFragment implements AlarmsContract.View {
@@ -38,27 +43,34 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     @Inject
     AlarmsContract.Presenter mPresenter;
 
-    private AlarmItemListener listener;
-    private AlarmsAdapter listAdapter;
-    private LinearLayout alarmsView;
-    private View noAlarmsView;
-    private ImageView noAlarmsIcon;
-    private TextView noAlarmsMainView;
-    private TextView noAlarmsAddView;
+    private AlarmItemListener mListener;
+    private AlarmsAdapter mAlarmsAdapter;
+
+    @BindView(R.id.alarms_linear_layout)
+    LinearLayout mAlarmsView;
+
+    @BindView(R.id.alarms_list)
+    RecyclerView mAlarmsList;
+
+    @BindView(R.id.no_alarms)
+    View mNoAlarmsView;
+
+    @BindView(R.id.no_alarms_icon)
+    ImageView mNoAlarmsIcon;
+
+    @BindView(R.id.no_alarms_main)
+    TextView noAlarmsMainView;
+
+    @BindView(R.id.no_alarms_add)
+    TextView noAlarmsAddView;
 
     @Inject
     public AlarmsFragment() {
     }
 
-    @NonNull
-    public static AlarmsFragment newInstance() {
-        return new AlarmsFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.listAdapter = new AlarmsAdapter(new ArrayList<Alarm>(0), listener);
     }
 
     @Override
@@ -73,10 +85,8 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
         mPresenter.dropView();
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
     public void setPresenter(@NonNull AlarmsContract.Presenter presenter) {
-        this.mPresenter = checkNotNull(presenter);
     }
 
     @Override
@@ -88,26 +98,14 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.alarms_fragment, container, false);
+        ButterKnife.bind(this, root);
 
-        // Set the adapter
-        ListView alarmsView = root.findViewById(R.id.alarms_list);
-        alarmsView.setAdapter(this.listAdapter);
+        this.mAlarmsAdapter = new AlarmsAdapter(new ArrayList<Alarm>(0));
+        mAlarmsList.setAdapter(mAlarmsAdapter);
+        mAlarmsList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mAlarmsList.addItemDecoration(new DividerItemDecoration(mAlarmsList.getContext(),
+                DividerItemDecoration.VERTICAL));
 
-        this.alarmsView = (LinearLayout) root.findViewById(R.id.alarms_linear_layout);
-
-        // Set up  no tasks view
-        noAlarmsView = root.findViewById(R.id.no_alarms);
-        noAlarmsIcon = (ImageView) root.findViewById(R.id.no_alarms_icon);
-        noAlarmsMainView = (TextView) root.findViewById(R.id.no_alarms_main);
-        noAlarmsAddView = (TextView) root.findViewById(R.id.no_alarms_add);
-        noAlarmsAddView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddAlarm();
-            }
-        });
-
-        // Set up floating action button
         FloatingActionButton fab =
                 (FloatingActionButton) getActivity().findViewById(R.id.add_alarm_fab);
 
@@ -123,8 +121,15 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     }
 
     @Override
-    public void showAlarms(List<Alarm> tasks) {
+    public void showAlarms(@NonNull List<Alarm> alarms) {
+        if (alarms.isEmpty()) {
+            return;
+        }
 
+        mAlarmsAdapter.replaceData(alarms);
+
+        mAlarmsView.setVisibility(View.VISIBLE);
+        mNoAlarmsView.setVisibility(View.GONE);
     }
 
     @Override
@@ -135,72 +140,207 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
 
     @Override
     public void showNoAlarms() {
-        showNoTasksViews(
+        showNoAlarmsViews(
                 getResources().getString(R.string.no_alarms),
                 R.drawable.ic_assignment_turned_in_24dp,
                 false
         );
     }
 
-    private void showNoTasksViews(String mainText, int iconRes, boolean showAddView) {
-        alarmsView.setVisibility(View.GONE);
-        noAlarmsView.setVisibility(View.VISIBLE);
+    @NonNull
+    private Time calculateTimeLeft(@NonNull Time alarmTime) {
+        final GregorianCalendar calendar = new GregorianCalendar();
+        final Time currentTime = new Time(calendar.getTime().getTime());
+        int hoursLeft = 0;
+        int minutesLeft = 0;
+        if (currentTime.getHours() > alarmTime.getHours()) {
+            hoursLeft = 24 - currentTime.getHours() + alarmTime.getHours();
+        } else if (currentTime.getHours() < alarmTime.getHours()) {
+            hoursLeft = alarmTime.getHours() - currentTime.getHours();
+        } else if (currentTime.getHours() == alarmTime.getHours()) {
+            hoursLeft = 0;
+        }
+        if (currentTime.getMinutes() > alarmTime.getMinutes()) {
+            minutesLeft = 60 - currentTime.getMinutes() + alarmTime.getMinutes();
+            hoursLeft =- 1;
+        } else {
+            minutesLeft = alarmTime.getMinutes() - currentTime.getMinutes();
+        }
+        if (hoursLeft < 0) {
+            hoursLeft = 23;
+        }
+        return new Time(hoursLeft, minutesLeft, 0);
+    }
+
+    private int calculateDaysLeft(@NonNull Alarm alarm) {
+        final GregorianCalendar calendar = new GregorianCalendar();
+        final Time currentTime = new Time(calendar.getTime().getTime());
+        final int currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        int daysLeft = 0;
+        for (int i = 0; i < alarm.getRepeatDays().size(); ++i) {
+            if (alarm.getRepeatDays().get(i) && i < currentDayOfWeek - 1) {
+                daysLeft = 7 - currentDayOfWeek - 1 - i;
+            } else if (alarm.getRepeatDays().get(i) && i == currentDayOfWeek - 1) {
+                if (alarm.getTime().getHours() > currentTime.getHours()) {
+                    daysLeft = 0;
+                    break;
+                } else if (alarm.getTime().getHours() == currentTime.getHours()) {
+                    if (alarm.getTime().getMinutes() > currentTime.getMinutes()) {
+                        daysLeft = 0;
+                        break;
+                    } else {
+                        daysLeft = 6;
+                    }
+                } else {
+                    daysLeft = 6;
+                }
+              break;
+            } else if (alarm.getRepeatDays().get(i) && i > currentDayOfWeek - 1) {
+                daysLeft = i - currentDayOfWeek - 1;
+                break;
+            }
+        }
+        return daysLeft;
+    }
+
+    @Override
+    public void showAddedAlarmMessage(Alarm newAlarm) {
+        int timeLeftStringResId;
+        int daysStringResId;
+        int daysLeft = calculateDaysLeft(newAlarm);
+        if (daysLeft == 0) {
+            timeLeftStringResId = R.string.from_now_message;
+            daysStringResId = R.string.days;
+        } else {
+            timeLeftStringResId = R.string.from_now_message_with_days;
+            if (daysLeft == 1) {
+                daysStringResId = R.string.day;
+            } else {
+                daysStringResId = R.string.days;
+            }
+        }
+
+        int hoursStringResId;
+        int minutesStringResId;
+        Time timeLeft = calculateTimeLeft(newAlarm.getTime());
+        int hoursLeft = timeLeft.getHours();
+        int minutesLeft = timeLeft.getMinutes();
+        if (hoursLeft == 1) {
+            hoursStringResId = R.string.hour;
+        } else {
+            hoursStringResId = R.string.hours;
+        }
+        if (minutesLeft == 1) {
+            minutesStringResId = R.string.minute;
+        } else {
+            minutesStringResId = R.string.minutes;
+        }
+
+        String timeLeftResultString;
+        if (daysLeft == 0) {
+            timeLeftResultString = getString(timeLeftStringResId, hoursLeft, minutesLeft,
+                            getString(hoursStringResId), getString(minutesStringResId));
+        } else {
+            timeLeftResultString = getString(timeLeftStringResId, daysLeft, hoursLeft, minutesLeft,
+                    getString(daysStringResId), getString(hoursStringResId),
+                    getString(minutesStringResId));
+        }
+        showMessage(getString(R.string.alarm_set_for, timeLeftResultString));
+    }
+
+    @Override
+    public void showErrorMessage() {
+        showMessage(getString(R.string.error_ocurred));
+    }
+
+    private void showMessage(@NonNull String message) {
+        Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+    }
+
+    private void showNoAlarmsViews(String mainText, int iconRes, boolean showAddView) {
+        mAlarmsView.setVisibility(View.GONE);
+        mNoAlarmsView.setVisibility(View.VISIBLE);
 
         noAlarmsMainView.setText(mainText);
-        noAlarmsIcon.setImageDrawable(getResources().getDrawable(iconRes));
+        mNoAlarmsIcon.setImageDrawable(getResources().getDrawable(iconRes));
         noAlarmsAddView.setVisibility(showAddView ? View.VISIBLE : View.GONE);
     }
 
-    private static class AlarmsAdapter extends BaseAdapter {
-
-        private List<Alarm> alarms;
-        private final AlarmItemListener listener;
-
-        public AlarmsAdapter(List<Alarm> alarms,
-                             AlarmItemListener listener) {
-            this.alarms = alarms;
-            this.listener = listener;
-        }
-
-
-        @Override
-        public int getCount() {
-            return alarms.size();
-        }
-
-        @Override
-        public Alarm getItem(int i) {
-            return alarms.get(i);
-        }
-
-        @SuppressLint("RestrictedApi")
-        private void setList(List<Alarm> tasks) {
-            this.alarms = checkNotNull(tasks);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            View rowView = view;
-            if (rowView == null) {
-                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                rowView = inflater.inflate(R.layout.alarm_item, viewGroup, false);
-            }
-
-            final Alarm alarm = getItem(i);
-
-            TextView titleTV = (TextView) rowView.findViewById(R.id.item_number);
-            titleTV.setText(alarm.getTitle());
-
-            return rowView;
-        }
-    }
 
     public interface AlarmItemListener {
         void onActivateClick(Alarm activatedTask);
+    }
+
+    static class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder> {
+
+        List<Alarm> mAlarms;
+
+        AlarmsAdapter(@NonNull List<Alarm> alarms) {
+            mAlarms = alarms;
+        }
+
+        void replaceData(List<Alarm> alarms) {
+            mAlarms = alarms;
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.alarm_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            Alarm alarm = mAlarms.get(position);
+            String alarmHours = alarm.getTime().getHours() < 10 ?
+                    ("0" + String.valueOf(alarm.getTime().getHours())) :
+                    String.valueOf(alarm.getTime().getHours());
+            String alarmMinutes = alarm.getTime().getMinutes() < 10 ?
+                    ("0" + String.valueOf(alarm.getTime().getMinutes())) :
+                    String.valueOf(alarm.getTime().getMinutes());
+            String time = alarmHours + ":" + alarmMinutes;
+            holder.getTimeTextView().setText(time);
+            holder.getLabelTextView().setText(alarm.getTitle());
+        }
+
+        @Override
+        public int getItemCount() {
+            return mAlarms.size();
+        }
+
+        static class ViewHolder extends RecyclerView.ViewHolder {
+
+            private final TextView mTimeTextView;
+            private final TextView mLabelTextView;
+            private final TextView mRepeatDaysTextView;
+            private final Switch mIsActiveSwitch;
+
+            ViewHolder(View v) {
+                super(v);
+                mTimeTextView = v.findViewById(R.id.alarm_time_tw);
+                mLabelTextView = v.findViewById(R.id.alarm_label_tw);
+                mRepeatDaysTextView = v.findViewById(R.id.alarm_repeat_tw);
+                mIsActiveSwitch = v.findViewById(R.id.is_alarm_active_switch);
+            }
+
+            public TextView getTimeTextView() {
+                return mTimeTextView;
+            }
+
+            public TextView getLabelTextView() {
+                return mLabelTextView;
+            }
+
+            public TextView getRepeatDaysTextView() {
+                return mRepeatDaysTextView;
+            }
+
+            public Switch getIsActiveSwitch() {
+                return mIsActiveSwitch;
+            }
+        }
     }
 }

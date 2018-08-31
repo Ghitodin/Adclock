@@ -86,6 +86,11 @@ public class AlarmsLocalDataSource implements AlarmsDataSource {
     }
 
     @Override
+    public void getRecentlySaved(@NonNull LoadAlarmCallback callback) {
+        // Recently saved alarms cached only in the Repository cache
+    }
+
+    @Override
     public void save(@NonNull final Alarm alarm) {
         Runnable diskAccessRunnable = new Runnable() {
             @Override

@@ -35,6 +35,8 @@ public interface AlarmsDataSource {
 
     void get(@NonNull String id, @NonNull LoadAlarmCallback callback);
 
+    void getRecentlySaved(@NonNull LoadAlarmCallback callback);
+
     void save(@NonNull Alarm alarm);
 
     void update(@NonNull Alarm alarm);

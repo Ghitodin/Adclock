@@ -22,6 +22,7 @@ public class AlarmsRepository implements AlarmsDataSource {
 
     private Map<String, Alarm> mCachedAlarms = new LinkedHashMap<>();
     private Alarm mCachedRetainedAlarm;
+    private String mRecentlySavedAlarmId;
 
     private boolean mCacheIsValid = false;
 
@@ -103,7 +104,20 @@ public class AlarmsRepository implements AlarmsDataSource {
     }
 
     @Override
+    public void getRecentlySaved(@NonNull LoadAlarmCallback callback) {
+        if (mCacheIsValid && mRecentlySavedAlarmId != null) {
+            Alarm recentlySavedAlarm = mCachedAlarms.get(mRecentlySavedAlarmId);
+            if (recentlySavedAlarm != null) {
+                callback.onLoaded(recentlySavedAlarm);
+            }
+            return;
+        }
+        callback.onNotAvailable();
+    }
+
+    @Override
     public void save(@NonNull Alarm alarm) {
+        mRecentlySavedAlarmId = alarm.getId();
         mCachedAlarms.put(alarm.getId(), alarm);
         mLocalDataSource.save(alarm);
     }
