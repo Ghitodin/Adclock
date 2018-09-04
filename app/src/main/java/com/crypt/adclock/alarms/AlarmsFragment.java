@@ -43,7 +43,8 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     @Inject
     AlarmsContract.Presenter mPresenter;
 
-    private AlarmItemListener mListener;
+    @Inject
+    AlarmItemListener mAlarmsItemListener;
     private AlarmsAdapter mAlarmsAdapter;
 
     @BindView(R.id.alarms_linear_layout)
@@ -251,11 +252,7 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     }
 
 
-    public interface AlarmItemListener {
-        void onActivateClick(Alarm activatedTask);
-    }
-
-    static class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder> {
+    class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder> {
 
         List<Alarm> mAlarms;
 
@@ -278,7 +275,7 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            Alarm alarm = mAlarms.get(position);
+            final Alarm alarm = mAlarms.get(position);
             String alarmHours = alarm.getTime().getHourOfDay() < 10 ?
                     ("0" + String.valueOf(alarm.getTime().getHourOfDay())) :
                     String.valueOf(alarm.getTime().getHourOfDay());
@@ -288,6 +285,22 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
             String time = alarmHours + ":" + alarmMinutes;
             holder.getTimeTextView().setText(time);
             holder.getLabelTextView().setText(alarm.getTitle());
+
+            holder.getMainView().setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mAlarmsItemListener.onAlarmLongPressed(alarm);
+                    return true;
+                }
+            });
+
+            holder.getMainView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mAlarmsItemListener.onAlarmClicked(alarm);
+                }
+            });
+
         }
 
         @Override
@@ -295,36 +308,43 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
             return mAlarms.size();
         }
 
-        static class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder {
 
             private final TextView mTimeTextView;
             private final TextView mLabelTextView;
             private final TextView mRepeatDaysTextView;
             private final Switch mIsActiveSwitch;
+            private final View mMainView;
 
             ViewHolder(View v) {
                 super(v);
+                mMainView = v;
                 mTimeTextView = v.findViewById(R.id.alarm_time_tw);
                 mLabelTextView = v.findViewById(R.id.alarm_label_tw);
                 mRepeatDaysTextView = v.findViewById(R.id.alarm_repeat_tw);
                 mIsActiveSwitch = v.findViewById(R.id.is_alarm_active_switch);
             }
 
-            public TextView getTimeTextView() {
+            View getMainView() {
+                return mMainView;
+            }
+
+            TextView getTimeTextView() {
                 return mTimeTextView;
             }
 
-            public TextView getLabelTextView() {
+            TextView getLabelTextView() {
                 return mLabelTextView;
             }
 
-            public TextView getRepeatDaysTextView() {
+            TextView getRepeatDaysTextView() {
                 return mRepeatDaysTextView;
             }
 
-            public Switch getIsActiveSwitch() {
+            Switch getIsActiveSwitch() {
                 return mIsActiveSwitch;
             }
         }
     }
+
 }

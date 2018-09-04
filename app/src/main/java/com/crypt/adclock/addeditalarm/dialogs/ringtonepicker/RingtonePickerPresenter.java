@@ -11,7 +11,8 @@ public class RingtonePickerPresenter implements
     RingtonePickerContract.Presenter.OnRingtoneSelectedListener mListener;
 
     @Inject
-    public RingtonePickerPresenter(RingtonePickerContract.Presenter.OnRingtoneSelectedListener listener) {
+    public RingtonePickerPresenter(RingtonePickerContract.Presenter.OnRingtoneSelectedListener
+                                               listener) {
         mListener = listener;
     }
 

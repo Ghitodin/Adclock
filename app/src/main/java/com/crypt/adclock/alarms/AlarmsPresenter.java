@@ -3,6 +3,7 @@ package com.crypt.adclock.alarms;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.crypt.adclock.addeditalarm.AddEditAlarmActivity;
 import com.crypt.adclock.data.Alarm;
@@ -66,6 +67,16 @@ public class AlarmsPresenter implements AlarmsContract.Presenter,
 
     @Override
     public void activateAlarm(@NonNull Alarm activeTask) {
+
+    }
+
+    @Override
+    public void onAlarmClicked(Alarm alarm) {
+
+    }
+
+    @Override
+    public void onAlarmLongPressed(Alarm alarm) {
 
     }
 

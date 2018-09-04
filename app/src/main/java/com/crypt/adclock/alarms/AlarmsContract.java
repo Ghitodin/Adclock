@@ -15,6 +15,17 @@ import java.util.List;
 public interface AlarmsContract {
     interface View extends BaseView<Presenter> {
 
+        interface AlarmItemListener {
+
+            void onActivateClick(Alarm activatedAlarm);
+
+            void onDeactivateClick(Alarm deactivatedAlarm);
+
+            void onAlarmLongPressed(Alarm longPressedAlarm);
+
+            void onAlarmClicked(Alarm clickedAlarm);
+        }
+
         void showAlarms(List<Alarm> alarms);
 
         void showAddAlarm();
@@ -36,6 +47,10 @@ public interface AlarmsContract {
         void addNewAlarm();
 
         void activateAlarm(@NonNull Alarm activeTask);
+
+        void onAlarmClicked(Alarm alarm);
+
+        void onAlarmLongPressed(Alarm alarm);
 
     }
 }
