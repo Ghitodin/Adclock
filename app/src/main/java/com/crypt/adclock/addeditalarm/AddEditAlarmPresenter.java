@@ -12,10 +12,9 @@ import com.crypt.adclock.data.source.AlarmsDataSource;
 import com.crypt.adclock.data.source.AlarmsRepository;
 
 import org.jetbrains.annotations.Contract;
+import org.joda.time.DateTime;
 
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 
 import javax.inject.Inject;
 
@@ -70,8 +69,10 @@ final public class AddEditAlarmPresenter implements
             return;
         }
 
-        final Time currentAlarmTime = mAlarm.getTime();
-        final Time newTime = new Time(hours, currentAlarmTime.getMinutes(), 0);
+        final DateTime currentAlarmTime = mAlarm.getTime();
+        final DateTime newTime = new DateTime()
+                .withHourOfDay(hours)
+                .withMinuteOfHour(currentAlarmTime.getMinuteOfHour());
 
         mAlarm.setTime(newTime);
         if (mView != null) {
@@ -85,8 +86,11 @@ final public class AddEditAlarmPresenter implements
             return;
         }
 
-        final Time currentAlarmTime = mAlarm.getTime();
-        final Time newTime = new Time(currentAlarmTime.getHours(), minutes, 0);
+        final DateTime currentAlarmTime = mAlarm.getTime();
+        final DateTime newTime = new DateTime()
+                .withHourOfDay(currentAlarmTime.getHourOfDay())
+                .withMinuteOfHour(minutes);
+
         mAlarm.setTime(newTime);
         if (mView != null) {
             mView.displayTime(newTime);
@@ -184,8 +188,7 @@ final public class AddEditAlarmPresenter implements
 
         final boolean defaultVibrateMod = true;
 
-        final long currentTime = new GregorianCalendar().getTime().getTime();
-        final Time defaultAlarmTime = new Time(currentTime);
+        final DateTime defaultAlarmTime = DateTime.now();
 
         return new Alarm(defaultAlarmTitle, defaultAlarmTime, defaultAlarmRepeatDays,
                 true, defaultRingtoneUri, defaultVibrateMod);
@@ -230,7 +233,7 @@ final public class AddEditAlarmPresenter implements
     }
 
     private void updateView(String alarmTitle, ArrayList<Boolean> repeatDays, Uri ringtoneUri,
-                            boolean isVibrateEnabled, Time alarmTime) {
+                            boolean isVibrateEnabled, DateTime alarmTime) {
         if (mView != null && mView.isActive()) {
             mView.displayRepeatingDays(repeatDays);
             mView.displayRingtoneName(getRingtoneNameFromUri(ringtoneUri));

@@ -25,10 +25,10 @@ import com.crypt.adclock.addeditalarm.AddEditAlarmActivity;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.di.ActivityScoped;
 
-import java.sql.Time;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -147,67 +147,51 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
         );
     }
 
-    @NonNull
-    private Time calculateTimeLeft(@NonNull Time alarmTime) {
-        final GregorianCalendar calendar = new GregorianCalendar();
-        final Time currentTime = new Time(calendar.getTime().getTime());
-        int hoursLeft = 0;
-        int minutesLeft = 0;
-        if (currentTime.getHours() > alarmTime.getHours()) {
-            hoursLeft = 24 - currentTime.getHours() + alarmTime.getHours();
-        } else if (currentTime.getHours() < alarmTime.getHours()) {
-            hoursLeft = alarmTime.getHours() - currentTime.getHours();
-        } else if (currentTime.getHours() == alarmTime.getHours()) {
-            hoursLeft = 0;
+    private int getNextAlarmDaysTo(List<Boolean> alarmDays, int currentDayOfWeek,
+                                   boolean isCurrentIncluded) {
+        ArrayList<Boolean> twoWeeksAlarmDays = new ArrayList<>(alarmDays);
+        twoWeeksAlarmDays.addAll(alarmDays);
+        int startDayOfWeek = isCurrentIncluded ? currentDayOfWeek : (currentDayOfWeek + 1);
+        int daysToNextAlarm = startDayOfWeek - currentDayOfWeek;
+
+        for (int i = startDayOfWeek; i < twoWeeksAlarmDays.size(); ++i) {
+            if (twoWeeksAlarmDays.get(i)) {
+                return daysToNextAlarm;
+            }
+            ++daysToNextAlarm;
         }
-        if (currentTime.getMinutes() > alarmTime.getMinutes()) {
-            minutesLeft = 60 - currentTime.getMinutes() + alarmTime.getMinutes();
-            hoursLeft =- 1;
-        } else {
-            minutesLeft = alarmTime.getMinutes() - currentTime.getMinutes();
-        }
-        if (hoursLeft < 0) {
-            hoursLeft = 23;
-        }
-        return new Time(hoursLeft, minutesLeft, 0);
+        return 0;
     }
 
-    private int calculateDaysLeft(@NonNull Alarm alarm) {
-        final GregorianCalendar calendar = new GregorianCalendar();
-        final Time currentTime = new Time(calendar.getTime().getTime());
-        final int currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        int daysLeft = 0;
-        for (int i = 0; i < alarm.getRepeatDays().size(); ++i) {
-            if (alarm.getRepeatDays().get(i) && i < currentDayOfWeek - 1) {
-                daysLeft = 7 - currentDayOfWeek - 1 - i;
-            } else if (alarm.getRepeatDays().get(i) && i == currentDayOfWeek - 1) {
-                if (alarm.getTime().getHours() > currentTime.getHours()) {
-                    daysLeft = 0;
-                    break;
-                } else if (alarm.getTime().getHours() == currentTime.getHours()) {
-                    if (alarm.getTime().getMinutes() > currentTime.getMinutes()) {
-                        daysLeft = 0;
-                        break;
-                    } else {
-                        daysLeft = 6;
-                    }
-                } else {
-                    daysLeft = 6;
-                }
-              break;
-            } else if (alarm.getRepeatDays().get(i) && i > currentDayOfWeek - 1) {
-                daysLeft = i - currentDayOfWeek - 1;
-                break;
-            }
-        }
-        return daysLeft;
+    @NonNull
+    private Period calculateTimeLeft(@NonNull Alarm alarm) {
+        DateTime currentDateTime = DateTime.now();
+        DateTime alarmTime = alarm.getTime();
+        List<Boolean> repeatDays = alarm.getRepeatDays();
+        int compResult = currentDateTime.compareTo(DateTime.now()
+                .withHourOfDay(alarmTime.getHourOfDay())
+                .withMinuteOfHour(alarmTime.getMinuteOfHour()));
+
+        int currentDayOfWeek = currentDateTime.getDayOfWeek();
+        int daysToNextAlarm = getNextAlarmDaysTo(repeatDays, currentDayOfWeek,
+                compResult < 0);
+
+
+        DateTime alarmDateTime = DateTime.now()
+                .withHourOfDay(alarmTime.getHourOfDay())
+                .withMinuteOfHour(alarmTime.getMinuteOfHour());
+
+        alarmDateTime = alarmDateTime.plusDays(daysToNextAlarm);
+
+        return new Period(currentDateTime, alarmDateTime);
     }
 
     @Override
     public void showAddedAlarmMessage(Alarm newAlarm) {
         int timeLeftStringResId;
         int daysStringResId;
-        int daysLeft = calculateDaysLeft(newAlarm);
+        final Period timeToNextAlarm = calculateTimeLeft(newAlarm);
+        int daysLeft = timeToNextAlarm.getDays();
         if (daysLeft == 0) {
             timeLeftStringResId = R.string.from_now_message;
             daysStringResId = R.string.days;
@@ -222,9 +206,9 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
 
         int hoursStringResId;
         int minutesStringResId;
-        Time timeLeft = calculateTimeLeft(newAlarm.getTime());
-        int hoursLeft = timeLeft.getHours();
-        int minutesLeft = timeLeft.getMinutes();
+
+        int hoursLeft = timeToNextAlarm.getHours();
+        int minutesLeft = timeToNextAlarm.getMinutes();
         if (hoursLeft == 1) {
             hoursStringResId = R.string.hour;
         } else {
@@ -239,7 +223,7 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
         String timeLeftResultString;
         if (daysLeft == 0) {
             timeLeftResultString = getString(timeLeftStringResId, hoursLeft, minutesLeft,
-                            getString(hoursStringResId), getString(minutesStringResId));
+                    getString(hoursStringResId), getString(minutesStringResId));
         } else {
             timeLeftResultString = getString(timeLeftStringResId, daysLeft, hoursLeft, minutesLeft,
                     getString(daysStringResId), getString(hoursStringResId),
@@ -295,12 +279,12 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             Alarm alarm = mAlarms.get(position);
-            String alarmHours = alarm.getTime().getHours() < 10 ?
-                    ("0" + String.valueOf(alarm.getTime().getHours())) :
-                    String.valueOf(alarm.getTime().getHours());
-            String alarmMinutes = alarm.getTime().getMinutes() < 10 ?
-                    ("0" + String.valueOf(alarm.getTime().getMinutes())) :
-                    String.valueOf(alarm.getTime().getMinutes());
+            String alarmHours = alarm.getTime().getHourOfDay() < 10 ?
+                    ("0" + String.valueOf(alarm.getTime().getHourOfDay())) :
+                    String.valueOf(alarm.getTime().getHourOfDay());
+            String alarmMinutes = alarm.getTime().getMinuteOfHour() < 10 ?
+                    ("0" + String.valueOf(alarm.getTime().getMinuteOfHour())) :
+                    String.valueOf(alarm.getTime().getMinuteOfHour());
             String time = alarmHours + ":" + alarmMinutes;
             holder.getTimeTextView().setText(time);
             holder.getLabelTextView().setText(alarm.getTitle());

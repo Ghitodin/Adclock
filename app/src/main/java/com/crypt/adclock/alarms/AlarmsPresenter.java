@@ -89,6 +89,8 @@ public class AlarmsPresenter implements AlarmsContract.Presenter,
 
     @Override
     public void onNotAvailable() {
-
+        if (mAlarmsView != null) {
+            mAlarmsView.showNoAlarms();
+        }
     }
 }

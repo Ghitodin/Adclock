@@ -5,7 +5,8 @@ import android.net.Uri;
 import com.crypt.adclock.BasePresenter;
 import com.crypt.adclock.BaseView;
 
-import java.sql.Time;
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 
 /**
@@ -22,7 +23,7 @@ public interface AddEditAlarmContract {
 
         void displayRepeatingDays(ArrayList<Boolean> repeatDays);
 
-        void displayTime(Time time);
+        void displayTime(DateTime time);
 
         void displayVibrateMode(boolean isEnabled);
 

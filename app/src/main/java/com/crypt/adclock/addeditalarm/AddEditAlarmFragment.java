@@ -24,7 +24,8 @@ import com.crypt.adclock.util.TimeFormat;
 import com.crypt.adclock.util.WeekDays;
 import com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker;
 
-import java.sql.Time;
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -220,12 +221,12 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     }
 
     @Override
-    public void displayTime(Time time) {
-        int hours24based = time.getHours();
+    public void displayTime(DateTime time) {
+        int hours24based = time.getHourOfDay();
         int hours12based = TimeFormat.base24toBase12hours(hours24based);
         int amOrPm = (TimeFormat.isAm(hours24based) ? AM_INT : PM_INT);
         mHoursNumberPicker.setValue(hours12based);
-        mMinutesNumberPicker.setValue(time.getMinutes());
+        mMinutesNumberPicker.setValue(time.getMinuteOfHour());
         mAmPmPicker.setValue(amOrPm);
     }
 

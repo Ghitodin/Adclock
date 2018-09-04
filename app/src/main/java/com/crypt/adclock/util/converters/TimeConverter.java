@@ -3,24 +3,23 @@ package com.crypt.adclock.util.converters;
 import android.arch.persistence.room.TypeConverter;
 
 import org.jetbrains.annotations.Contract;
-
-import java.sql.Time;
+import org.joda.time.DateTime;
 
 public final class TimeConverter {
 
     @Contract("null -> null")
     @TypeConverter
-    public static Time toDate(String timeString) {
+    public static DateTime toDate(String timeString) {
         if (timeString == null) {
             return null;
         }
 
-        return Time.valueOf(timeString);
+        return DateTime.parse(timeString);
     }
 
     @Contract("null -> null")
     @TypeConverter
-    public static String fromDate(Time time) {
+    public static String fromDate(DateTime time) {
         if (time == null) {
             return null;
         }

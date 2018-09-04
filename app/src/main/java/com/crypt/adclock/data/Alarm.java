@@ -13,7 +13,8 @@ import com.crypt.adclock.util.converters.RepeatDaysConverter;
 import com.crypt.adclock.util.converters.TimeConverter;
 import com.crypt.adclock.util.converters.UriConverter;
 
-import java.sql.Time;
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ public class Alarm {
 
     @NonNull
     @ColumnInfo(name = "time")
-    private Time time;
+    private DateTime time;
 
     @NonNull
     @ColumnInfo(name = "repeat_days")
@@ -53,7 +54,7 @@ public class Alarm {
     private boolean isVibrateEnabled;
 
 
-    public Alarm(@NonNull String id, @Nullable String title, @NonNull Time time,
+    public Alarm(@NonNull String id, @Nullable String title, @NonNull DateTime time,
                  @NonNull ArrayList<Boolean> repeatDays, boolean isActive,
                  @NonNull Uri ringtoneUri, boolean isVibrateEnabled) {
         this.id = id;
@@ -69,7 +70,7 @@ public class Alarm {
      * Use this constructor to create a new active Alarm.
      */
     @Ignore
-    public Alarm(@Nullable String title, @NonNull Time time,
+    public Alarm(@Nullable String title, @NonNull DateTime time,
                  @NonNull ArrayList<Boolean> repeatDays, boolean isActive,
                  @NonNull Uri ringtoneUri, boolean isVibrateEnabled) {
         this(UUID.randomUUID().toString(), title, time, repeatDays,
@@ -87,7 +88,7 @@ public class Alarm {
     }
 
     @NonNull
-    public Time getTime() {
+    public DateTime getTime() {
         return time;
     }
 
@@ -109,7 +110,7 @@ public class Alarm {
         this.title = title;
     }
 
-    public void setTime(@NonNull Time time) {
+    public void setTime(@NonNull DateTime time) {
         this.time = time;
     }
 

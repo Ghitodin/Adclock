@@ -31,7 +31,9 @@ public abstract class AlarmsRepositoryModule {
     @Singleton
     @Provides
     static AlarmsDatabase provideDb(Application context) {
-        return Room.databaseBuilder(context, AlarmsDatabase.class, "Alarms.db").build();
+        return Room.databaseBuilder(context, AlarmsDatabase.class, "Alarms.db")
+                .fallbackToDestructiveMigration()
+                .build();
     }
 
     @Singleton
