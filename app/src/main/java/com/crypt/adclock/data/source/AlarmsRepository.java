@@ -124,6 +124,7 @@ public class AlarmsRepository implements AlarmsDataSource {
 
     @Override
     public void update(@NonNull Alarm alarm) {
+        mRecentlySavedAlarmId = alarm.getId();
         mCachedAlarms.put(alarm.getId(), alarm);
         mLocalDataSource.update(alarm);
     }

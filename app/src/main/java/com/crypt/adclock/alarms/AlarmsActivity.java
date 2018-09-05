@@ -14,6 +14,8 @@ import dagger.Lazy;
 import dagger.android.support.DaggerAppCompatActivity;
 
 public class AlarmsActivity extends DaggerAppCompatActivity {
+    public static final String EXTRA_ALARM_ID = "ALARM_ID";
+
     @Inject
     AlarmsContract.Presenter mAlarmsPresenter;
     @Inject

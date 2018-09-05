@@ -75,8 +75,6 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     @BindViews({R.id.day1, R.id.day2, R.id.day3, R.id.day4, R.id.day5, R.id.day6, R.id.day7})
     ToggleButton[] mRepeatDayButtons;
 
-
-    public static final String EXTRA_EDIT_ALARM_ID = "EDIT_ALARM_ID";
     private final int AM_INT = 0;
     private final int PM_INT = 1;
 

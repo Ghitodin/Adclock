@@ -134,9 +134,16 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     }
 
     @Override
+    public void showEditAlarm(Alarm alarm) {
+        Intent editAlarmIntent = new Intent(getContext(), AddEditAlarmActivity.class);
+        editAlarmIntent.putExtra(AlarmsActivity.EXTRA_ALARM_ID, alarm.getId());
+        startActivityForResult(editAlarmIntent, AddEditAlarmActivity.REQUEST_EDIT_TASK);
+    }
+
+    @Override
     public void showAddAlarm() {
-        Intent intent = new Intent(getContext(), AddEditAlarmActivity.class);
-        startActivityForResult(intent, AddEditAlarmActivity.REQUEST_ADD_TASK);
+        Intent addAlarmIntent = new Intent(getContext(), AddEditAlarmActivity.class);
+        startActivityForResult(addAlarmIntent, AddEditAlarmActivity.REQUEST_ADD_TASK);
     }
 
     @Override

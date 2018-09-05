@@ -28,6 +28,8 @@ public interface AlarmsContract {
 
         void showAlarms(List<Alarm> alarms);
 
+        void showEditAlarm(Alarm alarm);
+
         void showAddAlarm();
 
         void showNoAlarms();

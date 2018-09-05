@@ -3,6 +3,8 @@ package com.crypt.adclock;
 import com.crypt.adclock.data.source.AlarmsRepository;
 import com.crypt.adclock.di.DaggerAppComponent;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjector;
@@ -14,6 +16,7 @@ public class AdClockApplication extends DaggerApplication {
 
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
+        JodaTimeAndroid.init(this);
         return DaggerAppComponent.builder().application(this).build();
     }
 

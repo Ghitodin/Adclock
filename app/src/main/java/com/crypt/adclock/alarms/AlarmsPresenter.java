@@ -3,9 +3,7 @@ package com.crypt.adclock.alarms;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.crypt.adclock.addeditalarm.AddEditAlarmActivity;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.data.source.AlarmsDataSource;
 import com.crypt.adclock.data.source.AlarmsRepository;
@@ -33,8 +31,7 @@ public class AlarmsPresenter implements AlarmsContract.Presenter,
     @Override
     public void result(int requestCode, int resultCode) {
         // Show snackbar
-        if (AddEditAlarmActivity.REQUEST_ADD_TASK == requestCode &&
-                Activity.RESULT_OK == resultCode) {
+        if (Activity.RESULT_OK == resultCode) {
             mRepository.getRecentlySaved(new AlarmsDataSource.LoadAlarmCallback() {
                 @Override
                 public void onLoaded(Alarm alarm) {
@@ -66,13 +63,15 @@ public class AlarmsPresenter implements AlarmsContract.Presenter,
     }
 
     @Override
-    public void activateAlarm(@NonNull Alarm activeTask) {
+    public void activateAlarm(@NonNull Alarm activeAlarm) {
 
     }
 
     @Override
     public void editAlarm(Alarm alarm) {
-
+        if (mAlarmsView != null) {
+            mAlarmsView.showEditAlarm(alarm);
+        }
     }
 
     @Override

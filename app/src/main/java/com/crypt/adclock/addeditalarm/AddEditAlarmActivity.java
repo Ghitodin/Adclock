@@ -19,7 +19,9 @@ import dagger.android.support.DaggerAppCompatActivity;
 public class AddEditAlarmActivity extends DaggerAppCompatActivity {
 
     public static final String KEY_NEED_TO_LOAD_DATA = "KEY_NEED_TO_LOAD_DATA";
+    public static final String EXTRA_EDIT_ALARM_ID = "EDIT_ALARM_ID";
     public static final int REQUEST_ADD_TASK = 1;
+    public static final int REQUEST_EDIT_TASK = 2;
 
     private boolean mIsNeedToLoadData = true; // Load data on 1-st run
 

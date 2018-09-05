@@ -8,6 +8,7 @@ import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelContract;
 import com.crypt.adclock.addeditalarm.dialogs.editlabel.EditLabelPresenter;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerContract;
 import com.crypt.adclock.addeditalarm.dialogs.ringtonepicker.RingtonePickerPresenter;
+import com.crypt.adclock.alarms.AlarmsActivity;
 import com.crypt.adclock.di.ActivityScoped;
 import com.crypt.adclock.di.FragmentScoped;
 
@@ -22,7 +23,7 @@ public abstract class AddEditAlarmModule {
     @ActivityScoped
     @Nullable
     static String provideAlarmId(AddEditAlarmActivity activity) {
-        return activity.getIntent().getStringExtra(AddEditAlarmFragment.EXTRA_EDIT_ALARM_ID);
+        return activity.getIntent().getStringExtra(AlarmsActivity.EXTRA_ALARM_ID);
     }
 
     @Provides
