@@ -37,12 +37,11 @@ public abstract class AlarmsModule {
 
             @Override
             public void onAlarmLongPressed(Alarm alarm) {
-                presenter.onAlarmLongPressed(alarm);
             }
 
             @Override
             public void onAlarmClicked(Alarm alarm) {
-                presenter.onAlarmClicked(alarm);
+                presenter.editAlarm(alarm);
             }
         };
     }

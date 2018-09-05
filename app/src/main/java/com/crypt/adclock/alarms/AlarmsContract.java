@@ -48,9 +48,7 @@ public interface AlarmsContract {
 
         void activateAlarm(@NonNull Alarm activeTask);
 
-        void onAlarmClicked(Alarm alarm);
-
-        void onAlarmLongPressed(Alarm alarm);
+        void editAlarm(Alarm alarm);
 
     }
 }

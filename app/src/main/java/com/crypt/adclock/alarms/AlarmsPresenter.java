@@ -71,12 +71,7 @@ public class AlarmsPresenter implements AlarmsContract.Presenter,
     }
 
     @Override
-    public void onAlarmClicked(Alarm alarm) {
-
-    }
-
-    @Override
-    public void onAlarmLongPressed(Alarm alarm) {
+    public void editAlarm(Alarm alarm) {
 
     }
 
