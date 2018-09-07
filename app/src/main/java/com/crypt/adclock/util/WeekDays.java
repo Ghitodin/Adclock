@@ -1,7 +1,12 @@
 package com.crypt.adclock.util;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
+
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public final class WeekDays {
 
@@ -37,6 +42,11 @@ public final class WeekDays {
     public static String getDayShortName(int weekday) {
         // This array is returned from DateFormatSymbols.getShortWeekdays().
         return LABELS[weekday + 1];
+    }
+
+    @NonNull
+    public static List<String> getAllDaysShortNames() {
+        return new ArrayList<>(Arrays.asList(LABELS));
     }
 
     private WeekDays() {

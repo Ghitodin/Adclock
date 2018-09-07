@@ -78,8 +78,6 @@ public class AddEditAlarmFragment extends DaggerFragment implements
     private final int AM_INT = 0;
     private final int PM_INT = 1;
 
-    private OnFragmentInteractionListener mListener;
-
     @Inject
     public AddEditAlarmFragment() {
         // Required empty public constructor
@@ -280,10 +278,4 @@ public class AddEditAlarmFragment extends DaggerFragment implements
             mRepeatDayButtons[i].setTextOff(nameOfTheDay);
         }
     }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
 }

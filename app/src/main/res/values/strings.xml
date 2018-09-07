@@ -36,6 +36,7 @@
     <string name="minute">minute</string>
     <string name="minutes">minutes</string>
     <string name="error_ocurred">Error occurred</string>
+    <string name="one_time_alarm_label">One time</string>
     <!-- Alarms Activity end -->
 
 </resources>

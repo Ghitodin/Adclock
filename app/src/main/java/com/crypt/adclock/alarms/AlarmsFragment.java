@@ -24,6 +24,7 @@ import com.crypt.adclock.R;
 import com.crypt.adclock.addeditalarm.AddEditAlarmActivity;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.di.ActivityScoped;
+import com.crypt.adclock.util.WeekDays;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -292,6 +293,23 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
             String time = alarmHours + ":" + alarmMinutes;
             holder.getTimeTextView().setText(time);
             holder.getLabelTextView().setText(alarm.getTitle());
+            holder.getIsActiveSwitch().setChecked(alarm.isActive());
+
+            List<String> daysNames = WeekDays.getAllDaysShortNames();
+
+            List<Boolean> repeatDays = alarm.getRepeatDays();
+            StringBuilder repeatLabel = new StringBuilder();
+            for (int i = 0; i < repeatDays.size(); ++i) {
+                if (repeatDays.get(i)) {
+                    repeatLabel.append(daysNames.get(i)).append(" ");
+                }
+            }
+            String repeatLabelString = repeatLabel.toString();
+            if (repeatLabelString.isEmpty()) {
+                repeatLabelString = getResources().getString(R.string.one_time_alarm_label);
+            }
+
+            holder.getRepeatDaysTextView().setText(repeatLabelString);
 
             holder.getMainView().setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
