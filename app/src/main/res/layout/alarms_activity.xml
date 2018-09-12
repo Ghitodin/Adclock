@@ -42,6 +42,7 @@
             app:fabSize="normal"
             app:layout_anchor="@id/content_frame_alarms"
             app:layout_anchorGravity="bottom|right|end"
+            app:behavior_autoHide="false"
             app:srcCompat="@drawable/ic_add" />
 
     </android.support.design.widget.CoordinatorLayout>
