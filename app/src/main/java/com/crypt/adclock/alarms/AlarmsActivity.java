@@ -29,12 +29,12 @@ public class AlarmsActivity extends DaggerAppCompatActivity {
         setSupportActionBar(toolbar);
 
         AlarmsFragment tasksFragment =
-                (AlarmsFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+                (AlarmsFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame_alarms);
         if (tasksFragment == null) {
             // Create the fragment
             tasksFragment = mAlarmsFragmentProvider.get();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), tasksFragment, R.id.contentFrame);
+                    getSupportFragmentManager(), tasksFragment, R.id.content_frame_alarms);
         }
     }
 
