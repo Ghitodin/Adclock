@@ -6,7 +6,7 @@
                                              android:clickable="true"
                                              android:orientation="horizontal"
                                              android:focusable="true"
-                                             android:background="?android:attr/selectableItemBackground">
+                                             android:background="@drawable/alarm_selector">
 
     <TextView
         android:id="@+id/alarm_time_tw"

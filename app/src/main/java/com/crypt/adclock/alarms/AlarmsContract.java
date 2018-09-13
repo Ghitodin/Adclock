@@ -36,6 +36,8 @@ public interface AlarmsContract {
 
         void showAddedAlarmMessage(Alarm newAlarm);
 
+        void clearSelection();
+
         void showErrorMessage();
 
     }

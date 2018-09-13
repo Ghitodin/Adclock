@@ -1,8 +1,12 @@
 package com.crypt.adclock.alarms;
 
+import android.content.Context;
+
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.di.ActivityScoped;
 import com.crypt.adclock.di.FragmentScoped;
+
+import java.util.ArrayList;
 
 import dagger.Binds;
 import dagger.Module;
@@ -44,5 +48,18 @@ public abstract class AlarmsModule {
                 presenter.editAlarm(alarm);
             }
         };
+    }
+
+    @Provides
+    @ActivityScoped
+    static AlarmsAdapter provideAlarmsAdapter(Context fragment,
+                                              AlarmsContract.View.AlarmItemListener listener) {
+        AlarmsAdapter alarmsAdapter = new AlarmsAdapter(
+                new ArrayList<Alarm>(0),
+                listener,
+                fragment.getResources()
+        );
+
+        return alarmsAdapter;
     }
 }

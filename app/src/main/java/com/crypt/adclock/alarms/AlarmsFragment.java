@@ -12,19 +12,22 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crypt.adclock.R;
 import com.crypt.adclock.addeditalarm.AddEditAlarmActivity;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.di.ActivityScoped;
-import com.crypt.adclock.util.WeekDays;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -34,6 +37,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.recyclerview.selection.ItemDetailsLookup;
+import androidx.recyclerview.selection.OnDragInitiatedListener;
+import androidx.recyclerview.selection.OnItemActivatedListener;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StorageStrategy;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.support.DaggerFragment;
@@ -45,8 +53,9 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     AlarmsContract.Presenter mPresenter;
 
     @Inject
-    AlarmItemListener mAlarmsItemListener;
-    private AlarmsAdapter mAlarmsAdapter;
+    AlarmsAdapter mAlarmsAdapter;
+
+    SelectionTracker<Long> mSelectionTracker;
 
     @BindView(R.id.alarms_linear_layout)
     LinearLayout mAlarmsView;
@@ -66,6 +75,9 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     @BindView(R.id.no_alarms_add)
     TextView noAlarmsAddView;
 
+    private ActionMode actionMode;
+    MenuItem selectedItemCount;
+
     @Inject
     public AlarmsFragment() {
     }
@@ -73,6 +85,7 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -102,8 +115,78 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
         View root = inflater.inflate(R.layout.alarms_fragment, container, false);
         ButterKnife.bind(this, root);
 
-        this.mAlarmsAdapter = new AlarmsAdapter(new ArrayList<Alarm>(0));
         mAlarmsList.setAdapter(mAlarmsAdapter);
+        mSelectionTracker = new SelectionTracker.Builder<>(
+                "my_selection",
+                mAlarmsList,
+                new AlarmsAdapter.KeyProvider(),
+                new AlarmsAdapter.DetailsLookup(mAlarmsList),
+                StorageStrategy.createLongStorage())
+                .withSelectionPredicate(new AlarmsAdapter.Predicate())
+                .withOnItemActivatedListener(new OnItemActivatedListener<Long>() {
+                    @Override
+                    public boolean onItemActivated(@NonNull ItemDetailsLookup.ItemDetails<Long> item,
+                                                   @NonNull MotionEvent e) {
+                        Log.d("KEK", "Selected ItemId: " + item.toString());
+                        return false;
+                    }
+                })
+                .withOnDragInitiatedListener(new OnDragInitiatedListener() {
+                    @Override
+                    public boolean onDragInitiated(@NonNull MotionEvent e) {
+                        Log.d("KEK", "onDragInitiated");
+                        return true;
+                    }
+
+                })
+                .build();
+
+        if (savedInstanceState != null) {
+            mSelectionTracker.onRestoreInstanceState(savedInstanceState);
+        }
+
+        mAlarmsAdapter.setSelectionTracker(mSelectionTracker);
+
+        mSelectionTracker.addObserver(new SelectionTracker.SelectionObserver() {
+            @Override
+            public void onItemStateChanged(@NonNull Object key, boolean selected) {
+                super.onItemStateChanged(key, selected);
+            }
+
+            @Override
+            public void onSelectionRefresh() {
+                super.onSelectionRefresh();
+            }
+
+            @Override
+            public void onSelectionChanged() {
+                super.onSelectionChanged();
+                if (mSelectionTracker.hasSelection() && actionMode == null) {
+                    actionMode = (getActivity())
+                            .startActionMode(new ActionModeCallback(getActivity(),
+                                    mSelectionTracker));
+                    Log.e("KEK", "kek");
+                } else if (!mSelectionTracker.hasSelection() && actionMode != null) {
+                    actionMode.finish();
+                    actionMode = null;
+                } else {
+                    // Get selection items count (for displaying in app bar, for example)
+                    Log.e("KEK", "" + mSelectionTracker.getSelection().size());
+                }
+
+                // Get items:
+                for (Long aLong : mSelectionTracker.getSelection()) {
+                    Log.i("KEK", aLong.toString());
+                }
+
+            }
+
+            @Override
+            public void onSelectionRestored() {
+                super.onSelectionRestored();
+            }
+        });
+
         mAlarmsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         mAlarmsList.addItemDecoration(new DividerItemDecoration(mAlarmsList.getContext(),
                 DividerItemDecoration.VERTICAL));
@@ -120,6 +203,16 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
         });
 
         return root;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_selections) {
+            // Test option menu:
+            Toast.makeText(getActivity(), mSelectionTracker.getSelection().toString(), Toast.LENGTH_LONG).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -242,6 +335,17 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     }
 
     @Override
+    public void clearSelection() {
+        mSelectionTracker.clearSelection();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        mSelectionTracker.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void showErrorMessage() {
         showMessage(getString(R.string.error_ocurred));
     }
@@ -258,118 +362,4 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
         mNoAlarmsIcon.setImageDrawable(getResources().getDrawable(iconRes));
         noAlarmsAddView.setVisibility(showAddView ? View.VISIBLE : View.GONE);
     }
-
-
-    class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder> {
-
-        List<Alarm> mAlarms;
-
-        AlarmsAdapter(@NonNull List<Alarm> alarms) {
-            mAlarms = alarms;
-        }
-
-        void replaceData(List<Alarm> alarms) {
-            mAlarms = alarms;
-            notifyDataSetChanged();
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.alarm_item, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            final Alarm alarm = mAlarms.get(position);
-            String alarmHours = alarm.getTime().getHourOfDay() < 10 ?
-                    ("0" + String.valueOf(alarm.getTime().getHourOfDay())) :
-                    String.valueOf(alarm.getTime().getHourOfDay());
-            String alarmMinutes = alarm.getTime().getMinuteOfHour() < 10 ?
-                    ("0" + String.valueOf(alarm.getTime().getMinuteOfHour())) :
-                    String.valueOf(alarm.getTime().getMinuteOfHour());
-            String time = alarmHours + ":" + alarmMinutes;
-            holder.getTimeTextView().setText(time);
-            holder.getLabelTextView().setText(alarm.getTitle());
-            holder.getIsActiveSwitch().setChecked(alarm.isActive());
-
-            List<String> daysNames = WeekDays.getAllDaysShortNames();
-
-            List<Boolean> repeatDays = alarm.getRepeatDays();
-            StringBuilder repeatLabel = new StringBuilder();
-            for (int i = 0; i < repeatDays.size(); ++i) {
-                if (repeatDays.get(i)) {
-                    repeatLabel.append(daysNames.get(i)).append(" ");
-                }
-            }
-            String repeatLabelString = repeatLabel.toString();
-            if (repeatLabelString.isEmpty()) {
-                repeatLabelString = getResources().getString(R.string.one_time_alarm_label);
-            }
-
-            holder.getRepeatDaysTextView().setText(repeatLabelString);
-
-            holder.getMainView().setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    mAlarmsItemListener.onAlarmLongPressed(alarm);
-                    return true;
-                }
-            });
-
-            holder.getMainView().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mAlarmsItemListener.onAlarmClicked(alarm);
-                }
-            });
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return mAlarms.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-
-            private final TextView mTimeTextView;
-            private final TextView mLabelTextView;
-            private final TextView mRepeatDaysTextView;
-            private final Switch mIsActiveSwitch;
-            private final View mMainView;
-
-            ViewHolder(View v) {
-                super(v);
-                mMainView = v;
-                mTimeTextView = v.findViewById(R.id.alarm_time_tw);
-                mLabelTextView = v.findViewById(R.id.alarm_label_tw);
-                mRepeatDaysTextView = v.findViewById(R.id.alarm_repeat_tw);
-                mIsActiveSwitch = v.findViewById(R.id.is_alarm_active_switch);
-            }
-
-            View getMainView() {
-                return mMainView;
-            }
-
-            TextView getTimeTextView() {
-                return mTimeTextView;
-            }
-
-            TextView getLabelTextView() {
-                return mLabelTextView;
-            }
-
-            TextView getRepeatDaysTextView() {
-                return mRepeatDaysTextView;
-            }
-
-            Switch getIsActiveSwitch() {
-                return mIsActiveSwitch;
-            }
-        }
-    }
-
 }

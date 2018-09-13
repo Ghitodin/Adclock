@@ -58,6 +58,7 @@ public class AlarmsPresenter implements AlarmsContract.Presenter,
     @Override
     public void addNewAlarm() {
         if (mAlarmsView != null) {
+            mAlarmsView.clearSelection();
             mAlarmsView.showAddAlarm();
         }
     }
@@ -70,6 +71,7 @@ public class AlarmsPresenter implements AlarmsContract.Presenter,
     @Override
     public void editAlarm(Alarm alarm) {
         if (mAlarmsView != null) {
+            mAlarmsView.clearSelection();
             mAlarmsView.showEditAlarm(alarm);
         }
     }
