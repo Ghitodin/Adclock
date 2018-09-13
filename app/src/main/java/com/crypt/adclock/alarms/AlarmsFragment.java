@@ -7,6 +7,7 @@ package com.crypt.adclock.alarms;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
@@ -76,7 +77,7 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
     TextView noAlarmsAddView;
 
     private ActionMode actionMode;
-    MenuItem selectedItemCount;
+    FloatingActionButton mAddAlarmFab;
 
     @Inject
     public AlarmsFragment() {
@@ -127,14 +128,13 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
                     @Override
                     public boolean onItemActivated(@NonNull ItemDetailsLookup.ItemDetails<Long> item,
                                                    @NonNull MotionEvent e) {
-                        Log.d("KEK", "Selected ItemId: " + item.toString());
+                        // Ignores the regular click
                         return false;
                     }
                 })
                 .withOnDragInitiatedListener(new OnDragInitiatedListener() {
                     @Override
                     public boolean onDragInitiated(@NonNull MotionEvent e) {
-                        Log.d("KEK", "onDragInitiated");
                         return true;
                     }
 
@@ -165,7 +165,6 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
                     actionMode = (getActivity())
                             .startActionMode(new ActionModeCallback(getActivity(),
                                     mSelectionTracker));
-                    Log.e("KEK", "kek");
                 } else if (!mSelectionTracker.hasSelection() && actionMode != null) {
                     actionMode.finish();
                     actionMode = null;
@@ -191,11 +190,27 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
         mAlarmsList.addItemDecoration(new DividerItemDecoration(mAlarmsList.getContext(),
                 DividerItemDecoration.VERTICAL));
 
-        FloatingActionButton fab =
-                (FloatingActionButton) getActivity().findViewById(R.id.add_alarm_fab);
+        mAlarmsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
-        fab.setImageResource(R.drawable.ic_add);
-        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    mAddAlarmFab.hide();
+                } else {
+                    mAddAlarmFab.show();
+                }
+            }
+        });
+
+        mAddAlarmFab = getActivity().findViewById(R.id.add_alarm_fab);
+
+        mAddAlarmFab.setImageResource(R.drawable.ic_add);
+        mAddAlarmFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mPresenter.addNewAlarm();
