@@ -28,13 +28,13 @@ public class AlarmsActivity extends DaggerAppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        AlarmsFragment tasksFragment =
+        AlarmsFragment alarmsFragment =
                 (AlarmsFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame_alarms);
-        if (tasksFragment == null) {
+        if (alarmsFragment == null) {
             // Create the fragment
-            tasksFragment = mAlarmsFragmentProvider.get();
+            alarmsFragment = mAlarmsFragmentProvider.get();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), tasksFragment, R.id.content_frame_alarms);
+                    getSupportFragmentManager(), alarmsFragment, R.id.content_frame_alarms);
         }
     }
 

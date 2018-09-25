@@ -42,6 +42,8 @@ dependencies {
     // Room
     implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
+
+    // Butter Knife
     implementation "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"
 
