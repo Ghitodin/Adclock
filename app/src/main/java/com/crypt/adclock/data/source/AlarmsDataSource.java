@@ -43,5 +43,5 @@ public interface AlarmsDataSource {
 
     void deleteAll();
 
-    void delete(@NonNull String alarmId);
+    void deleteAlarms(List<Alarm> alarms);
 }

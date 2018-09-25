@@ -136,8 +136,10 @@ public class AlarmsRepository implements AlarmsDataSource {
     }
 
     @Override
-    public void delete(@NonNull String alarmId) {
-        mCachedAlarms.remove(alarmId);
-        mLocalDataSource.delete(alarmId);
+    public void deleteAlarms(List<Alarm> alarms) {
+        for (Alarm alarm : alarms) {
+            mCachedAlarms.remove(alarm.getId());
+        }
+        mLocalDataSource.deleteAlarms(alarms);
     }
 }

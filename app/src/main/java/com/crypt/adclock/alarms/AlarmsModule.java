@@ -7,6 +7,7 @@ import com.crypt.adclock.di.ActivityScoped;
 import com.crypt.adclock.di.FragmentScoped;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import dagger.Binds;
 import dagger.Module;
@@ -46,6 +47,11 @@ public abstract class AlarmsModule {
             @Override
             public void onAlarmClicked(Alarm alarm) {
                 presenter.editAlarm(alarm);
+            }
+
+            @Override
+            public void onAlarmsRemoved(List<Alarm> alarms) {
+                presenter.removeAlarms(alarms);
             }
         };
     }

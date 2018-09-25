@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.crypt.adclock.R;
 import com.crypt.adclock.data.Alarm;
 import com.crypt.adclock.util.WeekDays;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,6 +29,7 @@ import androidx.recyclerview.selection.SelectionTracker;
 class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder> {
 
     private List<Alarm> mAlarms;
+    private List<Alarm> mAlarmsForRemoval;
     private AlarmsContract.View.AlarmItemListener mAlarmsItemListener;
     private Resources mResources;
     private SelectionTracker<Long> mSelectionTracker;
@@ -67,6 +70,23 @@ class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder> {
     public int getItemCount() {
         return mAlarms.size();
     }
+
+    public void removeItems(List<Integer> positions) {
+        mAlarmsForRemoval = new ArrayList<>();
+
+        for (Integer position : positions) {
+            mAlarmsForRemoval.add(mAlarms.get(position));
+        }
+
+        for (Alarm alarm : mAlarmsForRemoval) {
+            int position = mAlarms.indexOf(alarm);
+            mAlarms.remove(position);
+            notifyItemRemoved(position);
+        }
+
+        mAlarmsItemListener.onAlarmsRemoved(mAlarmsForRemoval);
+    }
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
 

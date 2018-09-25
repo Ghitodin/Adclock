@@ -124,11 +124,11 @@ public class AlarmsLocalDataSource implements AlarmsDataSource {
     }
 
     @Override
-    public void delete(@NonNull final String alarmId) {
+    public void deleteAlarms(final List<Alarm> alarms) {
         Runnable diskAccessRunnable = new Runnable() {
             @Override
             public void run() {
-                mDao.delete(alarmId);
+                mDao.deleteAlarms(alarms);
             }
         };
         mExecutors.diskIO().execute(diskAccessRunnable);

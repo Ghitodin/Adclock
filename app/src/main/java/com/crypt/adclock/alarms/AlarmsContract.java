@@ -24,7 +24,10 @@ public interface AlarmsContract {
             void onAlarmLongPressed(Alarm longPressedAlarm);
 
             void onAlarmClicked(Alarm clickedAlarm);
-        }
+
+            void onAlarmsRemoved(List<Alarm> alarms);
+
+            }
 
         void showAlarms(List<Alarm> alarms);
 
@@ -53,6 +56,8 @@ public interface AlarmsContract {
         void activateAlarm(@NonNull Alarm activeTask);
 
         void editAlarm(Alarm alarm);
+
+        void removeAlarms(List<Alarm> alarms);
 
     }
 }

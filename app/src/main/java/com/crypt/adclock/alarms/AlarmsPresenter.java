@@ -77,6 +77,11 @@ public class AlarmsPresenter implements AlarmsContract.Presenter,
     }
 
     @Override
+    public void removeAlarms(List<Alarm> alarms) {
+        mRepository.deleteAlarms(alarms);
+    }
+
+    @Override
     public void takeView(AlarmsContract.View view) {
         mAlarmsView = view;
         loadAlarms();

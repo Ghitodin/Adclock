@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -162,9 +163,35 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
             public void onSelectionChanged() {
                 super.onSelectionChanged();
                 if (mSelectionTracker.hasSelection() && actionMode == null) {
+                    ActionModeCallback.OnActionItemClickedListener actionItemClickedListener =
+                            new ActionModeCallback.OnActionItemClickedListener() {
+                                @Override
+                                public void removeButtonClicked() {
+                                    if (mSelectionTracker.getSelection().isEmpty()) {
+                                        actionMode.finish();
+                                    } else {
+                                        List<Integer> itemsForRemove = new ArrayList<>();
+                                        for (Long aLong : mSelectionTracker.getSelection()) {
+                                            itemsForRemove.add(aLong.intValue());
+                                            Log.d("Kek", "TotalSize = "
+                                                    + mSelectionTracker.getSelection().size() +
+                                                    "Selection for remove " + aLong.toString());
+                                        }
+                                        mAlarmsAdapter.removeItems(itemsForRemove);
+                                        mSelectionTracker.clearSelection();
+
+                                    }
+                                }
+
+                                @Override
+                                public void cancelSelectionButtonClicked() {
+                                    mSelectionTracker.clearSelection();
+                                }
+                            };
+
                     actionMode = (getActivity())
                             .startActionMode(new ActionModeCallback(getActivity(),
-                                    mSelectionTracker));
+                                    mSelectionTracker, actionItemClickedListener));
                 } else if (!mSelectionTracker.hasSelection() && actionMode != null) {
                     actionMode.finish();
                     actionMode = null;
