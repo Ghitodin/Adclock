@@ -27,8 +27,8 @@ public class AlarmsRepository implements AlarmsDataSource {
     private boolean mCacheIsValid = false;
 
     @Inject
-    AlarmsRepository(@Local AlarmsDataSource tasksLocalDataSource) {
-        mLocalDataSource = tasksLocalDataSource;
+    AlarmsRepository(@Local AlarmsDataSource alarmsDataSource) {
+        mLocalDataSource = alarmsDataSource;
     }
 
     private void refreshCache(@NonNull List<Alarm> alarms) {

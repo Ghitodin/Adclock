@@ -96,8 +96,8 @@ public class AlarmsFragment extends DaggerFragment implements AlarmsContract.Vie
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         mPresenter.dropView();
+        super.onDestroy();
     }
 
     @Override

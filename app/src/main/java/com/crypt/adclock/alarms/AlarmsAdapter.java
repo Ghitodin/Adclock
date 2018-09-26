@@ -47,7 +47,7 @@ class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder> {
         mSelectionTracker = selectionTracker;
     }
 
-    void replaceData(List<Alarm> alarms) {
+    void replaceData(@NonNull List<Alarm> alarms) {
         mAlarms = alarms;
         notifyDataSetChanged();
     }
