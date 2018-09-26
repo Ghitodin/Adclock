@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Base application theme. --><style name="AppTheme" parent="Base.AppTheme" />
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Base.AppTheme" />
 
     <style name="AppTheme.OverlapSystemBar" parent="Base.AppTheme" />
 
@@ -11,7 +12,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
     </style>
 
@@ -22,7 +22,7 @@
         <item name="colorButtonNormal">@color/whiteBackground</item>
     </style>
 
-    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <!-- Style for Toggle buttons with days of the week. -->
     <style name="AlarmDayToggle" parent="SelectableButton">
